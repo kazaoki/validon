@@ -8,14 +8,9 @@
 </head>
 <body>
 
-<form action="check.php" method="post"
-  data-validon-config="contact/01"
-  data-validon-each="blur"
-  data-validon-errortag="<div class=error>$message</div>"
-  data-validon-position="append"
->
+<form action="check.php" method="post" id="form">
   <h2>テキスト</h2>
-  お名前：<input type="text" name="name"><br>
+  お名前：<input type="text" name="name" data-validon-on="keypress"> ※これのみ keypress イベントで発火<br>
   カナ：<input type="text" name="kana"><br>
   年齢：<input type="text" name="age"><br>
 
@@ -36,14 +31,38 @@
   <label><input type="checkbox" name="color" value="黒"> 黒</label><br>
 
   <h2>プルダウン</h2>
+  <select name="list" multiple>
+    <option value="111">111</option>
+    <option value="222">222</option>
+    <option value="333">333</option>
+    <option value="444">444</option>
+  </select>
 
   <br>
   <button type="submit">確認画面へ</button>
+  <button type="button" onClick="validon.validate(['content','age'])">お問い合わせ内容と年齢だけチェック</button>
 
 </form>
 
 </body>
 
 <script src="assets/validon/valid.js"></script>
+<script>
+var validon = new Validon({
+  form:     '#form',
+  config:   'contact/01',
+  eachfire: true,
+  errortag: '<div class="error">$message</div>',
+  position: 'append',
+  beforeFunc: function(send_json){
+    console.log('BEFORE')
+    console.log(send_json)
+  },
+  afterFunc: function(receive_json){
+    console.log('AFTER')
+    console.log(receive_json)
+  },
+})
+</script>
 
 </html>
