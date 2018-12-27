@@ -23,6 +23,6 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[assets/validon/*.php]
+[src/assets/validon/**/*.php]
 indent_style = space
 indent_size = 4

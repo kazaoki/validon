@@ -24,8 +24,8 @@ function Validon(opt)
 	validon.eachfire   = opt.eachfire || false
 	validon.errortag   = opt.errortag || '<div class="error">$message</div>'
 	validon.position   = opt.position || 'append'
-	validon.beforeFunc = opt.beforeFunc || 'append'
-	validon.afterFunc  = opt.afterFunc || 'append'
+	validon.beforeFunc = opt.beforeFunc
+	validon.afterFunc  = opt.afterFunc
 
 	// URLパス設定
 	validon.urlPath = __validonUrlPath
@@ -100,9 +100,28 @@ Validon.prototype = {
 	 */
 	validate: function(args){
 		var validon = this
-		var json = [];
+		var json = {
+			config: this.config
+		};
 
 		// データまとめ
+
+		// ブックにnameをいれてって、複数要素もname同じなら1回のみ
+
+		// json.params = []
+		// var elems = validon.form.querySelectorAll('[name]')
+		// for(var i=0; i<elems.length; i++) {
+		// 	if(elems[i].type==='radio') {
+		// 		elems[i].name ...
+		// 	} else if(elems[i].type==='checkbox') {
+		// 		;
+		// 	} else if(elems[i].tagName==='checkbox') {
+		// 		;
+		// 	}
+		// 	json.params[elems[i].name] = elems[i].value
+		// }
+
+		// 対象要素列挙
 		json.target = []
 		if(typeof args ==='undefined') {
 			// submitバリデートの場合全ての値
@@ -129,21 +148,22 @@ Validon.prototype = {
 
 		// Ajax
 		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = function()
+		{
 			if(4===this.readyState && 200===this.status) {
-
-				console.log(this.responseText);
+				json = this.response
+				if(typeof this.response ==='undefined') {
+					json = JSON.parse(this.responseText)
+				}
 
 				// フック：afterFunc
 				if(validon.beforeFunc) validon.afterFunc(json)
-
 			}
 		}
-		xhr.open('POST', validon.urlPath+'valid.php');
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.send(JSON.stringify(json));
-
-
+		xhr.open('POST', validon.urlPath+'valid.php')
+		xhr.setRequestHeader('Content-Type', 'application/json')
+		xhr.responseType = 'json'
+		xhr.send(JSON.stringify(json))
 
 		return this
 	}
