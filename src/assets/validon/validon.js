@@ -48,12 +48,12 @@ function Validon(opt)
 		if (validon.form.addEventListener) {
 			validon.form.addEventListener('submit', function(e){
 				(event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-				validon.validate()
+				validon.validon()
 			}, false);
 		} else if (validon.form.attachEvent) {
 			validon.form.attachEvent('onsubmit', function(e){
 				(event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-				validon.validate()
+				validon.validon()
 			})
 		}
 
@@ -77,9 +77,9 @@ function Validon(opt)
 			var elem = elems[i]
 			var eventName = elem.getAttribute('data-validon-on')
 			if (elem.addEventListener) {
-				elem.addEventListener(eventName, function(e){ validon.validate(this.name) }, false)
+				elem.addEventListener(eventName, function(e){ validon.validon(this.name) }, false)
 			} else if (elem.attachEvent) {
-				elem.attachEvent('on'+eventName, function(e){ validon.validate(e.srcElement.name) })
+				elem.attachEvent('on'+eventName, function(e){ validon.validon(e.srcElement.name) })
 			}
 		}
 	};
@@ -98,7 +98,7 @@ Validon.prototype = {
 	 * - 引数に文字列が入っている場合はnameとしてバリデート対象にする
 	 * - 引数に複数の文字列が配列で入っている場合は複数のnameとしてバリデート対象にする
 	 */
-	validate: function(args){
+	validon: function(args){
 		var validon = this
 		var json = {
 			config: this.config
@@ -160,7 +160,7 @@ Validon.prototype = {
 				if(validon.beforeFunc) validon.afterFunc(json)
 			}
 		}
-		xhr.open('POST', validon.urlPath+'valid.php')
+		xhr.open('POST', validon.urlPath+'validon.php')
 		xhr.setRequestHeader('Content-Type', 'application/json')
 		xhr.responseType = 'json'
 		xhr.send(JSON.stringify(json))

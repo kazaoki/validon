@@ -2,11 +2,11 @@
 
 // バリデート
 
-require_once('assets/validon/valid.php');
+require_once('assets/validon/validon.php');
 
 
 // 全体のバリデート
-$validated = validate($_POST);
+$validated = validon($_POST);
 
 
 // $validated['changes'] ... 値の変更のあるものが返る
@@ -15,6 +15,6 @@ $validated = validate($_POST);
 
 
 // 個別のバリデート
-$validated = validate(['name'=>'ヤマダタロウ']);
-$validated = validate(['name'=>'ヤマダタロウ', 'age'=>999]);
+$validated = validon(['name'=>'ヤマダタロウ']);
+$validated = validon(['name'=>'ヤマダタロウ', 'age'=>999]);
 

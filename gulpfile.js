@@ -78,7 +78,7 @@ gulp.task('js', ()=>{
 		)
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
-		.pipe(concat('valid.js'))
+		.pipe(concat('validon.js'))
 		// .pipe(gulp.dest('dist/js'))
 		.pipe(uglify())
 		// .pipe(rename({suffix: '.min'}))

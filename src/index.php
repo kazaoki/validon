@@ -46,7 +46,7 @@
 
 </body>
 
-<script src="assets/validon/valid.js"></script>
+<script src="assets/validon/validon.js"></script>
 <script>
 var validon = new Validon({
   form:     '#form',
