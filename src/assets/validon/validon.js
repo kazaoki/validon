@@ -104,44 +104,57 @@ Validon.prototype = {
 			config: this.config
 		};
 
-		// データまとめ
+		// 値まとめ
+		json.params = []
+		var params = {}
+		var elems = validon.form.querySelectorAll('[name]')
+		for(var i=0; i<elems.length; i++) {
+			var name = elems[i].getAttribute('name')
+			if('undefined'!==typeof params[name]) continue
+			if(elems[i].type==='radio') {
+				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
+				for(i=0; i<lump.length; i++) {
+					if(lump[i].checked) {
+						params[name] = lump[i].value
+						break
+					}
+				}
+			} else if(elems[i].type==='checkbox') {
+				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
+				params[name] = []
+				for(i=0; i<lump.length; i++) {
+					if(lump[i].checked) {
+						params[name].push(lump[i].value)
+					}
+				}
+			} else if(elems[i].tagName==='SELECT') {
+				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
+				params[name] = []
+				for(i=0; i<lump.length; i++) {
+					if(lump[i].selected) {
+						params[name].push(lump[i].value)
+					}
+				}
+			} else {
+				params[name] = elems[i].value
+			}
+		}
+		json.params = params
 
-		// ブックにnameをいれてって、複数要素もname同じなら1回のみ
-
-		// json.params = []
-		// var elems = validon.form.querySelectorAll('[name]')
-		// for(var i=0; i<elems.length; i++) {
-		// 	if(elems[i].type==='radio') {
-		// 		elems[i].name ...
-		// 	} else if(elems[i].type==='checkbox') {
-		// 		;
-		// 	} else if(elems[i].tagName==='checkbox') {
-		// 		;
-		// 	}
-		// 	json.params[elems[i].name] = elems[i].value
-		// }
-
-		// 対象要素列挙
-		json.target = []
+		// 対象要素まとめ
+		json.targets = []
 		if(typeof args ==='undefined') {
 			// submitバリデートの場合全ての値
-			var elems = validon.form.querySelectorAll('[name]')
-			for(var i=0; i<elems.length; i++) {
-				json.target.push(elems[i].name)
-			}
+			json.targets = Object.keys(json.params)
 		} else if(typeof args ==='string') {
 			// 個別バリデート：単体の場合（要素ごとのバリデート発火など）
-			json.target.push(args)
+			json.targets.push(args)
 		} else if(args instanceof Array) {
 			// 個別バリデート：複数の場合（直接jsからvalidate()実行など）
 			for(var i=0; i<args.length; i++) {
-				json.target.push(args[i])
+				json.targets.push(args[i])
 			}
 		}
-		// 重複除去
-		json.target = json.target.filter(function (x, i, self) {
-			return self.indexOf(x) === i;
-		});
 
 		// フック：beforeFunc
 		if(validon.beforeFunc) validon.beforeFunc(json)
@@ -170,92 +183,13 @@ Validon.prototype = {
 }
 
 /**
- * filterのPolyfill
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter#Polyfill
+ * Object.keys Polyfill
+ * http://tokenposts.blogspot.com/2012/04/javascript-objectkeys-browser.html
  */
-if (!Array.prototype.filter) {
-	Array.prototype.filter = function (func, thisArg) {
-		'use strict';
-		if (!((typeof func === 'Function' || typeof func === 'function') && this))
-			throw new TypeError();
-		var len = this.length >>> 0,
-			res = new Array(len), // preallocate array
-			t = this, c = 0, i = -1;
-		if (thisArg === undefined) {
-			while (++i !== len) {
-				// checks to see if the key was set
-				if (i in this) {
-					if (func(t[i], i, t)) {
-						res[c++] = t[i];
-					}
-				}
-			}
-		}
-		else {
-			while (++i !== len) {
-				// checks to see if the key was set
-				if (i in this) {
-					if (func.call(thisArg, t[i], i, t)) {
-						res[c++] = t[i];
-					}
-				}
-			}
-		}
-		res.length = c; // shrink down array to proper size
-		return res;
-	};
-}
-
-/**
- * indexOfのPolyfill
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
- */
-if (!Array.prototype.indexOf) Array.prototype.indexOf = (function (Object, max, min) {
-	"use strict";
-	return function indexOf(member, fromIndex) {
-		if (this === null || this === undefined) throw TypeError("Array.prototype.indexOf called on null or undefined");
-		var that = Object(this), Len = that.length >>> 0, i = min(fromIndex | 0, Len);
-		if (i < 0) i = max(0, Len + i); else if (i >= Len) return -1;
-		if (member === void 0) {
-			for (; i !== Len; ++i) if (that[i] === void 0 && i in that) return i; // undefined
-		} else if (member !== member) {
-			for (; i !== Len; ++i) if (that[i] !== that[i]) return i; // NaN
-		} else for (; i !== Len; ++i) if (that[i] === member) return i; // all else
-		return -1; // if the value was not found, then return -1
-	};
-})(Object, Math.max, Math.min);
-
-/**
- * lastIndexOfのPolyfill
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/lastIndexOf#Polyfill
- */
-if (!Array.prototype.lastIndexOf) {
-	Array.prototype.lastIndexOf = function (searchElement /*, fromIndex*/) {
-		'use strict';
-		if (this === void 0 || this === null) {
-			throw new TypeError();
-		}
-		var n, k,
-			t = Object(this),
-			len = t.length >>> 0;
-		if (len === 0) {
-			return -1;
-		}
-		n = len - 1;
-		if (arguments.length > 1) {
-			n = Number(arguments[1]);
-			if (n != n) {
-				n = 0;
-			}
-			else if (n != 0 && n != (1 / 0) && n != -(1 / 0)) {
-				n = (n > 0 || -1) * Math.floor(Math.abs(n));
-			}
-		}
-		for (k = n >= 0 ? Math.min(n, len - 1) : len - Math.abs(n); k >= 0; k--) {
-			if (k in t && t[k] === searchElement) {
-				return k;
-			}
-		}
-		return -1;
-	};
+if (!Object.keys) Object.keys = function(o) {
+	if (o !== Object(o))
+		throw new TypeError('Object.keys called on a non-object');
+	var k=[],p;
+	for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+	return k;
 }

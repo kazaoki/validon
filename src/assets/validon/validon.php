@@ -6,11 +6,16 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
     $json = json_decode(file_get_contents("php://input"), true) ?: [];
 }
 
+// error_log(print_r($json, 1));
+
 // バリデート設定をロード
 require_once 'configs/'.$json['config'].'.php';
 
-// バリデート実行
-$validated = validate($json['params']);
+// // バリデート実行
+// fireach(@$json['targets'] as $target) {
+//     ;
+//     $validated = validon($target, $json);
+// }
 
 // 結果JSONを返す
 header('Content-Type: application/json; charset=utf-8');
@@ -21,22 +26,30 @@ exit;
 /**
  * バリデート関数
  */
-function validate($params)
+function validon($params, $targets)
 {
-    $validated = [
-        'changes'  => [],
-        'errors'   => [],
-        'original' => $params,
-    ];
+    // $validated = [
+    //     'changes'  => [],
+    //     'errors'   => [],
+    //     'original' => $params,
+    // ];
+    $original = $params;
 
     // 各種処理
     foreach($params as $key=>$value) {
         if(@$_VALIDON[$key]) {
-            $validated = $_VALIDON[$key]($params, $validated);
+            list($params, $errors) = $_VALIDON[$key]($params, $errors);
         }
     }
 
-    return $validated;
+    // 値の変更を検出
+    $changes; // TODO
+
+    return [
+        'changes'  => $changes,
+        'errors'   => $errors,
+        'original' => $original,
+    ];
 }
 
 /**
