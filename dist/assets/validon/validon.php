@@ -1,55 +1,71 @@
 <?php
 
-// JSON受信
-$json = [];
+/**
+ * JSON受信したならJavaScriptからのAjax通信
+ */
 if('application/json'===$_SERVER['CONTENT_TYPE']) {
     $json = json_decode(file_get_contents("php://input"), true) ?: [];
+
+    // 指定のバリデート設定をロード
+    require_once __DIR__.'/configs/'.$json['config'].'.php';
+
+    // バリデート実行
+    list($errors, $new_params, $changed) = validon($json['params'], true);
+    $json['errors'] = $errors;
+    $json['params'] = $new_params;
+    $json['changed'] = $changed;
+
+    // 結果JSONを返す
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($json);
+    // echo json_encode([
+    //     'erros' => $errors,
+    //     'params' => $json['params'],
+    //     'changed' => $json['changed'],
+    // ]);
+
+    exit;
 }
-
-// error_log(print_r($json, 1));
-
-// バリデート設定をロード
-require_once 'configs/'.$json['config'].'.php';
-
-// // バリデート実行
-// fireach(@$json['targets'] as $target) {
-//     ;
-//     $validated = validon($target, $json);
-// }
-
-// 結果JSONを返す
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode($validated);
-
-exit;
 
 /**
  * バリデート関数
+ *
+ * $errors = validon($_POST); // エラーセットのみ返す。新データは直接引数を書き換える
+ * list($errors, $new_params, $changed) = validon($_POST, true); // 書き換えず詳しく返す
  */
-function validon($params, $targets)
+function validon(&$params, $verbose=false)
 {
-    // $validated = [
-    //     'changes'  => [],
-    //     'errors'   => [],
-    //     'original' => $params,
-    // ];
-    $original = $params;
+    global $_VALIDON;
+
+    // 変数用意
+    $new_params = $params;
+    $errors = [];
+    $changed = [];
 
     // 各種処理
-    foreach($params as $key=>$value) {
-        if(@$_VALIDON[$key]) {
-            list($params, $errors) = $_VALIDON[$key]($params, $errors);
+    foreach($new_params as $key=>$value) {
+        if(is_callable(@$_VALIDON[$key])) {
+            $error = $_VALIDON[$key]($new_params, $errors);
+            if(@$params[$key]!==$new_params[$key]) $changed[$key] = $new_params[$key];
+        } else {
+            error_log(sprintf('Validon error: no defined rules "%s"', $key));
         }
     }
 
     // 値の変更を検出
     $changes; // TODO
 
-    return [
-        'changes'  => $changes,
-        'errors'   => $errors,
-        'original' => $original,
-    ];
+    // 返却
+    if($verbose) {
+        return [
+            'errors' => $errors,
+            'new_params' => $new_params,
+            'changed' => $changed,
+        ];
+    } else {
+        $params = $new_params;
+        return $errors;
+    }
 }
 
 /**

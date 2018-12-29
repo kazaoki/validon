@@ -111,13 +111,13 @@ gulp.task('htmlphp', ()=>{
 		.pipe(browserSync.stream())
 });
 
-// /**
-//  * assets files copy
-//  */
-// gulp.task('assets', ()=>{
-// 	gulp.src(['src/assets/**/*'])
-// 		.pipe(gulp.dest('dist/assets'))
-// });
+/**
+ * other files copy
+ */
+gulp.task('other', ()=>{
+	gulp.src(['src/assets/validon/VERSION'])
+		.pipe(gulp.dest('dist/assets/validon'))
+});
 
 // /**
 //  * connect php
@@ -139,6 +139,7 @@ gulp.task('watch', ()=>{
 	// gulp.watch('src/images/**/*',['image']);
 	gulp.watch('src/**/*.html',['htmlphp']);
 	gulp.watch('src/**/*.php',['htmlphp']);
+	gulp.watch('src/assets/validon/VERSION',['other']);
 
 	// gulp.watch(['html/**/*.html', 'html/**/*.php', 'html/**/*.js'],()=>{
 	// 	gulp.src(['html/**/*.html', 'html/**/*.php', 'html/**/*.js'])
@@ -170,10 +171,10 @@ gulp.task('server', ()=>{
  * build & watch
  */
 // gulp.task('dev', ['js', 'sass', 'image', 'htmlphp', 'assets', 'connect-php', 'server', 'watch']);
-gulp.task('dev', ['js', 'htmlphp', 'server', 'watch']);
+gulp.task('dev', ['js', 'htmlphp', 'other', 'server', 'watch']);
 
 /**
  * build only (default))
  */
 // gulp.task('default', ['js', 'sass', 'image', 'htmlphp', 'assets']);
-gulp.task('default', ['js', 'htmlphp']);
+gulp.task('default', ['js', 'htmlphp', 'other']);

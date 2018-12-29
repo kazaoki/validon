@@ -44,7 +44,7 @@ test3</textarea><br>
 
   <br>
   <button type="submit">確認画面へ</button>
-  <button type="button" onClick="validon.validon(['content','age'])">お問い合わせ内容と年齢だけチェック</button>
+  <button type="button" onClick="validon.send(['content','age'])">お問い合わせ内容と年齢だけチェック</button>
 
 </form>
 

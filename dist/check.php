@@ -3,18 +3,12 @@
 // バリデート
 
 require_once('assets/validon/validon.php');
+require_once('assets/validon/configs/contact/01.php');
 
 
-// 全体のバリデート
-$validated = validon($_POST);
+// バリデート
+$errors = validon($_POST); // エラーセットのみ返す。新データは直接引数を書き換える
+// list($new_params, $errors, $changed) = validon($_POST, true); // 書き換えず詳しく返す
 
 
-// $validated['changes'] ... 値の変更のあるものが返る
-// $validated['errors'] ... エラーのあるものが返る
-
-
-
-// 個別のバリデート
-$validated = validon(['name'=>'ヤマダタロウ']);
-$validated = validon(['name'=>'ヤマダタロウ', 'age'=>999]);
-
+var_dump($errors);

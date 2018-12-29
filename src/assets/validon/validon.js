@@ -45,16 +45,14 @@ function Validon(opt)
 		}
 
 		// submitイベント登録
+		var submitEvent = function(event){
+			(event.preventDefault) ? event.preventDefault() : event.returnValue = false
+			validon.send()
+		}
 		if (validon.form.addEventListener) {
-			validon.form.addEventListener('submit', function(e){
-				(event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-				validon.validon()
-			}, false);
+			validon.form.addEventListener('submit', submitEvent, false)
 		} else if (validon.form.attachEvent) {
-			validon.form.attachEvent('onsubmit', function(e){
-				(event.preventDefault) ? event.preventDefault() : event.returnValue = false;
-				validon.validon()
-			})
+			validon.form.attachEvent('onsubmit', submitEvent)
 		}
 
 		// 要素ごとのイベント発火の標準設定（ラジオ、チェックボックス、プルダウンはonChange、それ以外はonBlurとす）
@@ -77,9 +75,9 @@ function Validon(opt)
 			var elem = elems[i]
 			var eventName = elem.getAttribute('data-validon-on')
 			if (elem.addEventListener) {
-				elem.addEventListener(eventName, function(e){ validon.validon(this.name) }, false)
+				elem.addEventListener(eventName, function(e){ validon.send(this.name) }, false)
 			} else if (elem.attachEvent) {
-				elem.attachEvent('on'+eventName, function(e){ validon.validon(e.srcElement.name) })
+				elem.attachEvent('on'+eventName, function(e){ validon.send(e.srcElement.name) })
 			}
 		}
 	};
@@ -92,13 +90,13 @@ function Validon(opt)
 Validon.prototype = {
 
 	/**
-	 * バリデート実行
+	 * PHPにデータを送信してバリデート実行
 	 *
 	 * - 引数空ならsubmit実行（全要素をバリデート対象にする
 	 * - 引数に文字列が入っている場合はnameとしてバリデート対象にする
 	 * - 引数に複数の文字列が配列で入っている場合は複数のnameとしてバリデート対象にする
 	 */
-	validon: function(args){
+	send: function(args){
 		var validon = this
 		var json = {
 			config: this.config
@@ -143,8 +141,10 @@ Validon.prototype = {
 
 		// 対象要素まとめ
 		json.targets = []
+		json.isSubmit = false
 		if(typeof args ==='undefined') {
 			// submitバリデートの場合全ての値
+			json.isSubmit = true
 			json.targets = Object.keys(json.params)
 		} else if(typeof args ==='string') {
 			// 個別バリデート：単体の場合（要素ごとのバリデート発火など）
@@ -157,7 +157,9 @@ Validon.prototype = {
 		}
 
 		// フック：beforeFunc
-		if(validon.beforeFunc) validon.beforeFunc(json)
+		if(validon.beforeFunc) {
+			if(false===validon.beforeFunc(json)) return false
+		}
 
 		// Ajax
 		var xhr = new XMLHttpRequest();
@@ -170,7 +172,9 @@ Validon.prototype = {
 				}
 
 				// フック：afterFunc
-				if(validon.beforeFunc) validon.afterFunc(json)
+				if(false===validon.afterFunc(json)) return false
+
+				// ターゲットのみエラーを反映する
 			}
 		}
 		xhr.open('POST', validon.urlPath+'validon.php')
