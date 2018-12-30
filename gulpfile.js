@@ -157,7 +157,7 @@ gulp.task('server', ()=>{
 		// proxy: 'localhost:8000', // connect php
 		// proxy: 'localhost:80', // genie
 		proxy: {
-			target: 'localhost',
+			target: process.platform==='darwin' ? '192.168.99.100' : 'localhost',
 			proxyReq: [
 				function(proxyReq) {
 					proxyReq.setHeader('X-BrowserSync-Proxy-Port', '3000');
