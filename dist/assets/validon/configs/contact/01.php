@@ -1,43 +1,47 @@
 <?php
 
-# Validon設定
+/**
+ * Validon設定
+ */
+// 定義がない場合の警告（true:する false:しない）
 $_VALIDON_ENV['NOTICE'] = false;
-$_VALIDON_ENV['BEFORE'] = function($key, &$params, &$errors){ error_log('<<< BEFORE >>>'); };
-$_VALIDON_ENV['AFTER'] = function($key, &$params, &$errors){ error_log('<<< AFTER >>>'); };
+// 値ごとの共通事前バリデート
+// $_VALIDON_ENV['BEFORE'] = function($key, &$param, &$data=null){ error_log('<<< BEFORE >>>'); };
+// 値ごとの共通事後バリデート
+// $_VALIDON_ENV['AFTER'] = function($key, &$param, &$data=null){ error_log('<<< AFTER >>>'); };
 
 /**
  * お名前
  */
-$_VALIDON['name'] = function(&$params, &$errors){
-    if(!strlen($params['name'])) {
-        $errors['name'] = '必須項目です。';
+$_VALIDON['name'] = function(&$param, &$data=null){
+    if(!strlen($param)) {
+        return '必須項目です。';
     }
 };
 
 /**
  * 年齢
  */
-$_VALIDON['age'] = function(&$params, &$errors){
-    if(!strlen($params['age'])) {
-        $errors['age'] = '必須項目です。';
+$_VALIDON['age'] = function(&$param, &$data=null){
+    if(!strlen($param)) {
+        return '必須項目です。';
     }
 };
 
 /**
  * サイズ
  */
-$_VALIDON['size[]'] = function(&$params, &$errors){
-    if(!strlen($params['size[]'])) {
-        $errors['size[]'] = '必須項目です。';
+$_VALIDON['size[]'] = function(&$param, &$data=null){
+    if(!strlen($param)) {
+        return '必須項目です。';
     }
 };
 
 /**
  * XXX
  */
-$_VALIDON['全角キーもOK'] = function(&$params, &$errors){
-    if(!strlen($params['全角キーもOK'])) {
-        $errors['全角キーもOK'] = '必須項目です。';
-        $params['全角キーもOK'] = 'あわわ';
+$_VALIDON['全角キーもOK'] = function(&$param, &$data=null){
+    if(!strlen($param)) {
+        return '必須項目です。';
     }
 };

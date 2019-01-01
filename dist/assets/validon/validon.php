@@ -12,10 +12,7 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
     require_once $configfile;
 
     // バリデート実行
-    list($errors, $new_params, $changes) = validon($json['params'], true);
-    $json['errors'] = $errors;
-    $json['new_params'] = $new_params;
-    $json['changes'] = $changes;
+    $json = validon($json['params'], $json);
 
     // 結果JSONを返す
     header('Content-Type: application/json; charset=utf-8');
@@ -27,54 +24,60 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
 /**
  * バリデート関数
  *
- * $errors = validon($_POST); // エラーセットのみ返す。新データは直接引数を書き換える
- * list($errors, $new_params, $changes) = validon($_POST, true); // 書き換えず詳しく返す
+ * @param Array $params ['name'=>'tarou'] のようなペア配列
+ * @param Array $fulldata ajaxから受けたフルのjsonデータの配列化したもの。またはバリデート中に他の要素を参照できるよう全ての値が入る。
+ *
+ * $result_set = validon($_POST);
+ * $result_set = validon(['name'=>'ほげたろう']);
+ * $result_set = validon($json['params'], $json);
+ *
+ * $result_set['params'] ... バリデート済み全パラメータがキー・バリューでセットされてくる
+ * $result_set['errors'] ... エラーメッセージがキー・バリューでセットされてくる
+ * $result_set['changes'] ... 変更のあるパラメータのキー名のみが配列で入ってくる
  */
-function validon(&$params, $verbose=false)
+function validon($params, $fulldata=false)
 {
     global $_VALIDON;
     global $_VALIDON_ENV;
 
-    // 変数用意
-    $new_params = $params;
-    $errors = [];
-    $changes = [];
+    // 変更前値の退避
+    $original_params = $params;
 
     // 各種処理
-    foreach($new_params as $key=>$value) {
+    foreach($params as $key=>$value) {
 
         // 全ての値をバリデートする前にフック実行
         if(is_callable(@$_VALIDON_ENV['BEFORE'])) {
-            $_VALIDON_ENV['BEFORE']($key, $new_params, $errors);
+            $_VALIDON_ENV['BEFORE']($key, $params[$key], $fulldata);
         }
 
         // バリデート関数が設定ファイルで定義されていればバリデート実行
         if(is_callable(@$_VALIDON[$key])) {
-            $_VALIDON[$key]($new_params, $errors, $json);
+            $error = $_VALIDON[$key]($params[$key], $fulldata);
+            if(strlen($error)) $errors[$key] = $error;
         } else {
             if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $key));
         }
 
         // 全ての値をバリデートした後にフック実行
         if(is_callable(@$_VALIDON_ENV['AFTER'])) {
-            $_VALIDON_ENV['AFTER']($key, $new_params, $errors);
+            $_VALIDON_ENV['AFTER']($key, $params[$key], $fulldata);
         }
     }
 
     // 値が変更されたキーのみ changes に集計する
-    foreach(array_unique(array_merge(array_keys($params), array_keys($new_params))) as $key) {
-        if(@$params[$key] !== @$new_params[$key]) {
+    foreach(array_unique(array_merge(array_keys($params), array_keys($original_params))) as $key) {
+        if(@$params[$key] !== @$original_params[$key]) {
             $changes[] = $key;
         }
     }
 
     // 返却
-    if($verbose) {
-        return [$errors, $new_params, $changes];
-    } else {
-        $params = $new_params;
-        return $errors;
-    }
+    @$fulldata['params'] = $params;
+    @$fulldata['errors'] = @$errors;
+    @$fulldata['changes'] = @$changes;
+
+    return $fulldata;
 }
 
 /**
