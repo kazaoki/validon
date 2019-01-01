@@ -1,5 +1,10 @@
 <?php
 
+# Validon設定
+$_VALIDON_ENV['NOTICE'] = false;
+$_VALIDON_ENV['BEFORE'] = function($key, &$params, &$errors){ error_log('<<< BEFORE >>>'); };
+$_VALIDON_ENV['AFTER'] = function($key, &$params, &$errors){ error_log('<<< AFTER >>>'); };
+
 /**
  * お名前
  */
