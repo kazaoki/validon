@@ -29,32 +29,44 @@ $_VALIDON['age'] = function(&$param, &$data=null){
     if($param<0 || $param>200) {
         return '正しくない値です。';
     }
-    $param .= '!';
-};
-
-/**
- * サイズ
- */
-$_VALIDON['size[]'] = function(&$param, &$data=null){
-    if(!strlen($param)) {
-        return '必須項目です。';
-    }
+    // $param .= '!';
 };
 
 /**
  * お問い合わせ内容
  */
 $_VALIDON['content'] = function(&$param, &$data=null){
+    // $param = preg_replace('/[\r\n]/', '', $param);
     if(!strlen($param)) {
         return '必須項目です。';
     }
 };
 
 /**
- * XXX
+ * サイズ選択（ラジオボタン）
  */
-$_VALIDON['全角キーもOK'] = function(&$param, &$data=null){
-    if(!strlen($param)) {
+$_VALIDON['size[]'] = function(&$params, &$data=null){
+    if(!count($params)) {
+        return '必須項目です。';
+    }
+};
+
+/**
+ * 色選択（チェックボックス）
+ */
+$_VALIDON['color[]'] = function(&$params, &$data=null){
+    // if(!in_array('黄', $params, true)) $params[] = '黄';
+    if(!count($params)) {
+        return '必須項目です。';
+    }
+};
+
+/**
+ * プルダウン
+ */
+$_VALIDON['list[]'] = function(&$params, &$data=null){
+    // if(!in_array('333', $params, true)) $params[] = '333';
+    if(!count($params)) {
         return '必須項目です。';
     }
 };

@@ -25,8 +25,10 @@ function Validon(opt)
 	validon.errorgroup    = opt.errorgroup || 'section'
 	validon.errorposition = opt.errorposition || 'append'
 	validon.errortag      = opt.errortag || '<div class="error">$message</div>'
-	validon.beforeFunc    = opt.beforeFunc
-	validon.afterFunc     = opt.afterFunc
+	validon.startFunc     = opt.startFunc  // 開始してすぐ
+	validon.beforeFunc    = opt.beforeFunc // json送信直前
+	validon.afterFunc     = opt.afterFunc  // json受信直後
+	validon.finishFunc    = opt.finishFunc // 処理完了後
 
 	// URLパス設定
 	validon.urlPath = __validonUrlPath
@@ -103,6 +105,11 @@ Validon.prototype = {
 			config: this.config
 		};
 
+		// フック：startFunc
+		if(validon.startFunc && 'function' === typeof validon.startFunc) {
+			if(false === validon.startFunc(json)) return false
+		}
+
 		// 値まとめ
 		json.params = []
 		var params = {}
@@ -158,7 +165,7 @@ Validon.prototype = {
 		}
 
 		// フック：beforeFunc
-		if(validon.beforeFunc) {
+		if(validon.beforeFunc && 'function' === typeof validon.beforeFunc) {
 			if(false === validon.beforeFunc(json)) return false
 		}
 
@@ -173,10 +180,36 @@ Validon.prototype = {
 				}
 
 				// フック：afterFunc
-				if(false === validon.afterFunc(json)) return false
+				if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
+					if(false === validon.afterFunc(json)) return false
+				}
 
-				// ターゲットのみエラーを反映する
-				if(json.targets.length) {
+				// ターゲットのみ値の変更があれば反映する
+				if(json.changes && json.changes.length) {
+					for(var i=0; i<json.changes.length; i++) {
+						var name = json.changes[i]
+						var elem = validon.form.querySelector('[name="'+name+'"]')
+						if(
+							'INPUT' === elem.tagName &&
+							('checkdradiobox' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
+						) {
+							var elems = validon.form.querySelectorAll('[name="'+name+'"]')
+							for(var j=0; j<elems.length; j++) {
+								elems[j].checked = -1 !== json.params[name].indexOf(elems[j].value)
+							}
+						} else if('SELECT' === elem.tagName) {
+							var options = elem.querySelectorAll('option')
+							for(var j=0; j<options.length; j++) {
+								options[j].selected = -1 !== json.params[name].indexOf(options[j].value)
+							}
+						} else {
+							elem.value = json.params[name]
+						}
+					}
+				}
+
+				// ターゲットのみエラーがあれば反映する
+				if(json.targets && json.targets.length) {
 					for(var i=0; i<json.targets.length; i++) {
 						var name = json.targets[i]
 						var elem = validon.form.querySelector('[name="'+name+'"]')
@@ -210,9 +243,17 @@ Validon.prototype = {
 				}
 
 				// 第二引数に関数が指定されていたらここで実行
-				if(callback && typeof(callback)) {
+				if(callback && 'function' === typeof callback) {
 					callback(json)
 				}
+
+				// フック：finsihFunc
+				if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
+					if(false === validon.finishFunc(json)) return false
+				}
+
+				// エラーが一つも無ければsubmitする（isSubmit時のみ）
+				if(!json.errors && json.isSubmit) validon.form.submit()
 			}
 		}
 		xhr.open('POST', validon.urlPath+'validon.php')
@@ -235,3 +276,25 @@ if (!Object.keys) Object.keys = function(o) {
 	for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
 	return k;
 }
+
+/**
+ * Array.indexOf Polyfill
+ * https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf#Polyfill
+ */
+if (!Array.prototype.indexOf) Array.prototype.indexOf = (function (Object, max, min) {
+	"use strict";
+	return function indexOf(member, fromIndex) {
+		if (this === null || this === undefined) throw TypeError("Array.prototype.indexOf called on null or undefined");
+
+		var that = Object(this), Len = that.length >>> 0, i = min(fromIndex | 0, Len);
+		if (i < 0) i = max(0, Len + i); else if (i >= Len) return -1;
+
+		if (member === void 0) {
+			for (; i !== Len; ++i) if (that[i] === void 0 && i in that) return i; // undefined
+		} else if (member !== member) {
+			for (; i !== Len; ++i) if (that[i] !== that[i]) return i; // NaN
+		} else for (; i !== Len; ++i) if (that[i] === member) return i; // all else
+
+		return -1; // if the value was not found, then return -1
+	};
+})(Object, Math.max, Math.min);

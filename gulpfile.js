@@ -106,7 +106,7 @@ gulp.task('js', ()=>{
  * html/php files copy
  */
 gulp.task('htmlphp', ()=>{
-	gulp.src(['src/**/*.html', 'src/**/*.php'])
+	gulp.src(['src/**/*.html', 'src/**/*.php', 'src/**/*.css'])
 		.pipe(gulp.dest('dist'))
 		.pipe(browserSync.stream())
 });
@@ -139,6 +139,7 @@ gulp.task('watch', ()=>{
 	// gulp.watch('src/images/**/*',['image']);
 	gulp.watch('src/**/*.html',['htmlphp']);
 	gulp.watch('src/**/*.php',['htmlphp']);
+	gulp.watch('src/**/*.css',['htmlphp']);
 	gulp.watch('src/assets/validon/VERSION',['other']);
 
 	// gulp.watch(['html/**/*.html', 'html/**/*.php', 'html/**/*.js'],()=>{

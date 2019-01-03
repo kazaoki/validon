@@ -8,6 +8,7 @@
   <!--[if lt IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js"></script>
   <![endif]-->
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -26,9 +27,6 @@
     </section>
     <section>
       ほげ：<input type="text" name="hoge" value=""><br>
-    </section>
-    <section>
-      画像：<input type="file" name="picture" accept="image/*"><br>
     </section>
   </section>
 
@@ -58,13 +56,23 @@ test3</textarea><br>
   </section>
 
   <section>
-    <h2>プルダウン</h2>
+    <h2>*プルダウン</h2>
     <select name="list[]" multiple>
       <option value="111">111</option>
       <option value="222" selected>222</option>
       <option value="333">333</option>
       <option value="444" selected>444</option>
     </select>
+  </section>
+
+  <section>
+    <h2>ファイル選択</h2>
+    ※最後に考える
+  </section>
+
+  <section>
+    <h2>その他特殊</h2>
+    ※日時やスライダーなど
   </section>
 
   <br>
@@ -85,6 +93,9 @@ var validon = new Validon({
   errorgroup: 'section',
   // errorposition: 'prepend',
   errortag: '<div class="error">$message</div>',
+  startFunc: function(){
+    console.log('START')
+  },
   beforeFunc: function(send_json){
     console.log('BEFORE')
     console.log(send_json)
@@ -93,6 +104,11 @@ var validon = new Validon({
     console.log('AFTER')
     console.log(receive_json)
   },
+  finishFunc: function(json){
+    console.log('FINISH')
+    var error = this.form.querySelector('.error');
+    if(error) document.querySelector('html').scrollTop = error.offsetTop - 30
+  }
 })
 </script>
 
