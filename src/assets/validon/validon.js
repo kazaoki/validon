@@ -96,7 +96,7 @@ Validon.prototype = {
 	 * - 引数に文字列が入っている場合はnameとしてバリデート対象にする
 	 * - 引数に複数の文字列が配列で入っている場合は複数のnameとしてバリデート対象にする
 	 */
-	send: function(args){
+	send: function(elems, callback){
 		var validon = this
 		var json = {
 			config: this.config
@@ -142,17 +142,17 @@ Validon.prototype = {
 		// 対象要素まとめ
 		json.targets = []
 		json.isSubmit = false
-		if(typeof args ==='undefined') {
+		if(typeof elems ==='undefined') {
 			// submitバリデートの場合全ての値
 			json.isSubmit = true
 			json.targets = Object.keys(json.params)
-		} else if(typeof args ==='string') {
+		} else if(typeof elems ==='string') {
 			// 個別バリデート：単体の場合（要素ごとのバリデート発火など）
-			json.targets.push(args)
-		} else if(args instanceof Array) {
+			json.targets.push(elems)
+		} else if(elems instanceof Array) {
 			// 個別バリデート：複数の場合（直接jsからvalidate()実行など）
-			for(var i=0; i<args.length; i++) {
-				json.targets.push(args[i])
+			for(var i=0; i<elems.length; i++) {
+				json.targets.push(elems[i])
 			}
 		}
 
@@ -175,6 +175,11 @@ Validon.prototype = {
 				if(false===validon.afterFunc(json)) return false
 
 				// ターゲットのみエラーを反映する
+
+				// 第二引数に関数が指定されていたらここで実行
+				if(callback && typeof(callback)) {
+					callback(json)
+				}
 			}
 		}
 		xhr.open('POST', validon.urlPath+'validon.php')
