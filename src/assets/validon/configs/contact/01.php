@@ -26,12 +26,25 @@ $_VALIDON['age'] = function(&$param, &$data=null){
     if(!strlen($param)) {
         return '必須項目です。';
     }
+    if($param<0 || $param>200) {
+        return '正しくない値です。';
+    }
+    $param .= '!';
 };
 
 /**
  * サイズ
  */
 $_VALIDON['size[]'] = function(&$param, &$data=null){
+    if(!strlen($param)) {
+        return '必須項目です。';
+    }
+};
+
+/**
+ * お問い合わせ内容
+ */
+$_VALIDON['content'] = function(&$param, &$data=null){
     if(!strlen($param)) {
         return '必須項目です。';
     }

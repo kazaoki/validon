@@ -19,13 +19,14 @@ function Validon(opt)
 	var validon = this;
 
 	// オプションセット
-	validon.form       = opt.form
-	validon.config     = opt.config
-	validon.eachfire   = opt.eachfire || false
-	validon.errortag   = opt.errortag || '<div class="error">$message</div>'
-	validon.position   = opt.position || 'append'
-	validon.beforeFunc = opt.beforeFunc
-	validon.afterFunc  = opt.afterFunc
+	validon.form          = opt.form
+	validon.config        = opt.config
+	validon.eachfire      = opt.eachfire || false
+	validon.errorgroup    = opt.errorgroup || 'section'
+	validon.errorposition = opt.errorposition || 'append'
+	validon.errortag      = opt.errortag || '<div class="error">$message</div>'
+	validon.beforeFunc    = opt.beforeFunc
+	validon.afterFunc     = opt.afterFunc
 
 	// URLパス設定
 	validon.urlPath = __validonUrlPath
@@ -105,11 +106,11 @@ Validon.prototype = {
 		// 値まとめ
 		json.params = []
 		var params = {}
-		var elems = validon.form.querySelectorAll('[name]')
-		for(var i=0; i<elems.length; i++) {
-			var name = elems[i].getAttribute('name')
+		var elements = validon.form.querySelectorAll('[name]')
+		for(var i=0; i<elements.length; i++) {
+			var name = elements[i].getAttribute('name')
 			if('undefined'!==typeof params[name]) continue
-			if(elems[i].type==='radio') {
+			if(elements[i].type==='radio') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
 				for(i=0; i<lump.length; i++) {
 					if(lump[i].checked) {
@@ -117,7 +118,7 @@ Validon.prototype = {
 						break
 					}
 				}
-			} else if(elems[i].type==='checkbox') {
+			} else if(elements[i].type==='checkbox') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
 				params[name] = []
 				for(i=0; i<lump.length; i++) {
@@ -125,7 +126,7 @@ Validon.prototype = {
 						params[name].push(lump[i].value)
 					}
 				}
-			} else if(elems[i].tagName==='SELECT') {
+			} else if(elements[i].tagName==='SELECT') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
 				params[name] = []
 				for(i=0; i<lump.length; i++) {
@@ -134,7 +135,7 @@ Validon.prototype = {
 					}
 				}
 			} else {
-				params[name] = elems[i].value
+				params[name] = elements[i].value
 			}
 		}
 		json.params = params
@@ -158,23 +159,55 @@ Validon.prototype = {
 
 		// フック：beforeFunc
 		if(validon.beforeFunc) {
-			if(false===validon.beforeFunc(json)) return false
+			if(false === validon.beforeFunc(json)) return false
 		}
 
 		// Ajax
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function()
 		{
-			if(4===this.readyState && 200===this.status) {
+			if(4 === this.readyState && 200 === this.status) {
 				json = this.response
-				if(typeof this.response ==='undefined') {
+				if('undefined' === typeof this.response) {
 					json = JSON.parse(this.responseText)
 				}
 
 				// フック：afterFunc
-				if(false===validon.afterFunc(json)) return false
+				if(false === validon.afterFunc(json)) return false
 
 				// ターゲットのみエラーを反映する
+				if(json.targets.length) {
+					for(var i=0; i<json.targets.length; i++) {
+						var name = json.targets[i]
+						var elem = validon.form.querySelector('[name="'+name+'"]')
+						var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+						if(!errorholder.length) {
+							var parent = elem.parentNode
+							while (parent.tagName !== validon.errorgroup.toUpperCase()) {
+								parent = parent.parentNode;
+								if('undefined' === typeof parent.tagName) {
+									parent = elem.parentNode
+									break
+								}
+							}
+							errorholder = document.createElement('div')
+							errorholder.setAttribute('data-validon-errorholder', name)
+							if(validon.errorposition === 'append') {
+								parent.appendChild(errorholder)
+							} else if(validon.errorposition === 'prepend') {
+								parent.insertBefore(errorholder, parent.childNodes[0]);
+							}
+							errorholder = new Array(errorholder)
+						}
+						var message = ''
+						if(json.errors && 'undefined' !== typeof json.errors[name]) {
+							message = validon.errortag.replace(/\$message/, json.errors[name])
+						}
+						for(var j=0; j<errorholder.length; j++) {
+							errorholder[j].innerHTML = message
+						}
+					}
+				}
 
 				// 第二引数に関数が指定されていたらここで実行
 				if(callback && typeof(callback)) {
