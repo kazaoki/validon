@@ -21,7 +21,7 @@ if(count(@$result['errors'])) {
     );
   }
   echo '</ul>';
-  die;
+  exit;
 }
 
 // 変数展開
