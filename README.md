@@ -6,7 +6,11 @@ PHPとJavaScriptとで共通で使える汎用バリデータです。
 PHPフォームを作成する時など、JavaScriptとPHPとで入力チェックを行ったりしますが、別々のルールになってしまい統一性がなかったり、毎回同じようなことをPHPとJSで２回書くのは面倒ですよね。
 そこで、バリデータの内容は項目ごとにPHPで自由に書いて、JSからはajaxで、PHPからは `require()` 等でロードして同一のバリデートができるようにしました。
 
+設定ファイルがPHPなので、かなり融通がききます。
+既存のフレームワークに組み込んだり、データベースと連帯してみたり、ものすごく複雑な処理が必要だったりする場合も比較的カンタンに実装できるはずです。
+
 また、jQuery依存なしで、最新ChromeとIE8で動作確認をしています。
+（PHPのバージョンは5.5以上、7以上を推奨とします）
 
 ## 読み方
 
@@ -60,17 +64,17 @@ if(count(@$result['errors'])) {
 /**
  * お名前（必須）
  */
-$_VALIDON['name'] = function(&$param, &$data=null)
+$_VALIDON['name'] = function(&$value, &$data=null)
 {
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if(mb_strlen($param) > 32) return '32文字以内で入力してください。';
+    if(!strlen($value)) return '必須項目です。';
+    if(mb_strlen($value) > 32) return '32文字以内で入力してください。';
 };
 
 /**
  * 年齢（任意）
  */
-$_VALIDON['age'] = function(&$param, &$data=null)
+$_VALIDON['age'] = function(&$value, &$data=null)
 {
     return;
 };
@@ -132,21 +136,21 @@ config: '2018/contact' -> `assets/validon/configs/2018/contact.php`
 /**
  * 年齢
  */
-$_VALIDON['age'] = function(&$param, &$data=null)
+$_VALIDON['age'] = function(&$value, &$data=null)
 {
     // 全角英数字を半角に変換
-    $param = mb_convert_kana($param, 'as');
+    $value = mb_convert_kana($value, 'as');
 
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if($param<0 || $param>200) return '正しくない値です。';
-    if(!ctype_digit($param)) return '数字以外が入力されています。';
+    if(!strlen($value)) return '必須項目です。';
+    if($value<0 || $value>200) return '正しくない値です。';
+    if(!ctype_digit($value)) return '数字以外が入力されています。';
 };
 ```
 
 ### バリデート関数の引数について
-第一引数は対象となる項目の実際の入力値が入ってきます。`&` で指定してあるので、直接内容を書き換えてしまうことができ、JS側にもその新しい値が戻っていきます。例えば、上記設定ですと全角数字で「４０」と入力しフォーカスが別の要素に移ると、バリデータが実行され半角の「40」になって帰ってき、INPUT要素の値も自動的に書き換わるという感じです。  
-チェックボックスや `<select>` の複数選択などは配列で入ってきます。複数値が入る場合にキー名はHTMLと合わせて `～[]` としてください。
+第一引数は対象となる項目の実際の入力値が入ってきます。`&` で指定してあるので、直接内容を書き換えてしまうことができ、JS側にもその新しい値が戻っていきます。例えば、上記設定ですと全角数字で「４０」と入力しフォーカスが別の要素に移ると、バリデータが実行され半角の「40」になってブラウザ側へ返り、INPUT要素の値も自動的に書き換わるという感じです。  
+チェックボックスや `<select>` の複数選択などは配列で入ってきます。複数値が入る場合にキー名はHTMLに合わせて `～[]` としてください。
 
 第二引数は、他の要素のデータが入ってきますので参照/書き換えを行うことが出来ます。
 
@@ -157,6 +161,9 @@ $_VALIDON['age'] = function(&$param, &$data=null)
 
 
 ## リファレンス
+
+
+
 
 （以下、ドキュメント準備中...
 

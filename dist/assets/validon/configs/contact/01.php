@@ -6,51 +6,51 @@
 // 定義がない場合の警告（true:する false:しない）
 $_VALIDON_ENV['NOTICE'] = true;
 // 値ごとの共通事前バリデート
-// $_VALIDON_ENV['BEFORE'] = function($key, &$param, &$data=null){ error_log('<<< BEFORE >>>'); };
+// $_VALIDON_ENV['BEFORE'] = function($key, &$value, &$data=null){ error_log('<<< BEFORE >>>'); };
 // 値ごとの共通事後バリデート
-// $_VALIDON_ENV['AFTER'] = function($key, &$param, &$data=null){ error_log('<<< AFTER >>>'); };
+// $_VALIDON_ENV['AFTER'] = function($key, &$value, &$data=null){ error_log('<<< AFTER >>>'); };
 
 /**
  * お名前
  */
-$_VALIDON['name'] = function(&$param, &$data=null)
+$_VALIDON['name'] = function(&$value, &$data=null)
 {
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if(mb_strlen($param) > 32) return '32文字以内で入力してください。';
+    if(!strlen($value)) return '必須項目です。';
+    if(mb_strlen($value) > 32) return '32文字以内で入力してください。';
 };
 
 /**
  * カナ
  */
-$_VALIDON['kana'] = function(&$param, &$data=null)
+$_VALIDON['kana'] = function(&$value, &$data=null)
 {
     // 全角ひらがなを全角カタカナに変換
-    $param = mb_convert_kana($param, 'C');
+    $value = mb_convert_kana($value, 'C');
 
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if(mb_strlen($param) > 32) return '32文字以内で入力してください。';
+    if(!strlen($value)) return '必須項目です。';
+    if(mb_strlen($value) > 32) return '32文字以内で入力してください。';
 };
 
 /**
  * 年齢
  */
-$_VALIDON['age'] = function(&$param, &$data=null)
+$_VALIDON['age'] = function(&$value, &$data=null)
 {
     // 全角英数字を半角に変換
-    $param = mb_convert_kana($param, 'as');
+    $value = mb_convert_kana($value, 'as');
 
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if($param<0 || $param>200) return '正しくない値です。';
-    if(!ctype_digit($param)) return '数字以外が入力されています。';
+    if(!strlen($value)) return '必須項目です。';
+    if($value<0 || $value>200) return '正しくない値です。';
+    if(!ctype_digit($value)) return '数字以外が入力されています。';
 };
 
 /**
  * 好きな食べ物（任意）
  */
-$_VALIDON['food'] = function(&$param, &$data=null)
+$_VALIDON['food'] = function(&$value, &$data=null)
 {
     return;
 };
@@ -58,36 +58,36 @@ $_VALIDON['food'] = function(&$param, &$data=null)
 /**
  * お問い合わせ内容
  */
-$_VALIDON['content'] = function(&$param, &$data=null)
+$_VALIDON['content'] = function(&$value, &$data=null)
 {
     // 条件
-    if(!strlen($param)) return '必須項目です。';
-    if(mb_strlen($param) > 255) return '255文字以内で入力してください。（改行も1カウント）';
+    if(!strlen($value)) return '必須項目です。';
+    if(mb_strlen($value) > 255) return '255文字以内で入力してください。（改行も1カウント）';
 };
 
 /**
  * サイズ選択（ラジオボタン）
  */
-$_VALIDON['size'] = function(&$params, &$data=null)
+$_VALIDON['size'] = function(&$values, &$data=null)
 {
     // 条件
-    if(!count($params)) return '必須項目です。';
+    if(!count($values)) return '必須項目です。';
 };
 
 /**
  * 色選択（チェックボックス）
  */
-$_VALIDON['color[]'] = function(&$params, &$data=null)
+$_VALIDON['color[]'] = function(&$values, &$data=null)
 {
     // 条件
-    if(!count($params)) return '必須項目です。';
+    if(!count($values)) return '必須項目です。';
 };
 
 /**
  * プルダウン
  */
-$_VALIDON['list[]'] = function(&$params, &$data=null)
+$_VALIDON['list[]'] = function(&$values, &$data=null)
 {
     // 条件
-    if(!count($params)) return '必須項目です。';
+    if(!count($values)) return '必須項目です。';
 };
