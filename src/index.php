@@ -17,16 +17,13 @@
   <section>
     <h2>テキスト</h2>
     <section>
-      *お名前：<input type="text" name="name" value="山田 太郎" data-validon-on="keypress"> ※これのみ keypress イベントで発火<br>
+      *お名前：<input type="text" name="name" value="山田 太郎" data-validon-on="keyup"> ※これのみ keyup イベントで発火<br>
     </section>
     <section>
       *カナ：<input type="text" name="kana" value="ヤマダ タロウ"><br>
     </section>
     <section>
       *年齢：<input type="text" name="age" value=""><br>
-    </section>
-    <section>
-      ほげ：<input type="text" name="hoge" value=""><br>
     </section>
   </section>
 
@@ -67,7 +64,7 @@ test3</textarea><br>
 
   <section>
     <h2>ファイル選択</h2>
-    ※最後に考える
+    ※後で考える
   </section>
 
   <section>
@@ -106,8 +103,10 @@ var validon = new Validon({
   },
   finishFunc: function(json){
     console.log('FINISH')
-    var error = this.form.querySelector('.error');
-    if(error) document.querySelector('html').scrollTop = error.offsetTop - 30
+    if(json.isSubmit) {
+      var error = this.form.querySelector('.error');
+      if(error) document.querySelector('html').scrollTop = error.offsetTop - 30
+    }
   }
 })
 </script>

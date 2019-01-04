@@ -79,8 +79,3 @@ function validon($params, $fulldata=false)
 
     return $fulldata;
 }
-
-/**
- * バリデートヘルパー関数
- */
-// 必須項目とか簡単にできるやつとか？
