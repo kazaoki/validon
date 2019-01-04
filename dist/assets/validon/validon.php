@@ -25,7 +25,7 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
  * バリデート関数
  *
  * @param Array $params ['name'=>'tarou'] のようなペア配列
- * @param Array $fulldata ajaxから受けたフルのjsonデータの配列化したもの。またはバリデート中に他の要素を参照できるよう全ての値が入る。
+ * @param Array $fulldata ajaxから受けたフルのjsonデータの配列化したもの、またはバリデート中に他の要素を参照できるよう全ての値が入る。
  *
  * $result_set = validon($_POST);
  * $result_set = validon(['name'=>'ほげたろう']);
@@ -35,7 +35,7 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
  * $result_set['errors'] ... エラーメッセージがキー・バリューでセットされてくる
  * $result_set['changes'] ... 変更のあるパラメータのキー名のみが配列で入ってくる
  */
-function validon($params, $fulldata=false)
+function validon($params, $fulldata=null)
 {
     global $_VALIDON;
     global $_VALIDON_ENV;
@@ -43,8 +43,18 @@ function validon($params, $fulldata=false)
     // 変更前値の退避
     $original_params = $params;
 
+    // fulldataが未指定なら第一引数のデータをセットする
+    if(!$fulldata) $fulldata = ['params' => $params];
+
     // 各種処理
     foreach($params as $key=>$value) {
+
+        // 設定の対応キーは'[]'もアリのキーなので配列ならここで'[]'つけておく。（JS/Ajaxからなら[]ついてるけどPHPからはついてないので）
+        if(is_array($value) && !preg_match('/\]$/', $key)) {
+            $validonkey = $key . '[]';
+        } else {
+            $validonkey = $key;
+        }
 
         // 全ての値をバリデートする前にフック実行
         if(is_callable(@$_VALIDON_ENV['BEFORE'])) {
@@ -52,11 +62,11 @@ function validon($params, $fulldata=false)
         }
 
         // バリデート関数が設定ファイルで定義されていればバリデート実行
-        if(is_callable(@$_VALIDON[$key])) {
-            $error = $_VALIDON[$key]($params[$key], $fulldata);
+        if(is_callable(@$_VALIDON[$validonkey])) {
+            $error = $_VALIDON[$validonkey]($params[$key], $fulldata);
             if(strlen($error)) $errors[$key] = $error;
         } else {
-            if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $key));
+            if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $validonkey));
         }
 
         // 全ての値をバリデートした後にフック実行

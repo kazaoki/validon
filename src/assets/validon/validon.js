@@ -25,10 +25,10 @@ function Validon(opt)
 	validon.errorgroup    = opt.errorgroup || 'section'
 	validon.errorposition = opt.errorposition || 'append'
 	validon.errortag      = opt.errortag || '<div class="error">$message</div>'
-	validon.startFunc     = opt.startFunc  // 開始してすぐ
-	validon.beforeFunc    = opt.beforeFunc // json送信直前
-	validon.afterFunc     = opt.afterFunc  // json受信直後
-	validon.finishFunc    = opt.finishFunc // 処理完了後
+	validon.startFunc     = opt.startFunc  // 開始してすぐ実行する関数
+	validon.beforeFunc    = opt.beforeFunc // json送信直前に実行する関数
+	validon.afterFunc     = opt.afterFunc  // json受信直後に実行する関数
+	validon.finishFunc    = opt.finishFunc // 処理完了後に実行する関数
 
 	// URLパス設定
 	validon.urlPath = __validonUrlPath

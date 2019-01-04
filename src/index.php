@@ -25,6 +25,8 @@
     <section>
       *年齢：<input type="text" name="age" value=""><br>
     </section>
+      好きな食べ物（任意）：<input type="text" name="food" value=""><br>
+    </section>
   </section>
 
   <section>

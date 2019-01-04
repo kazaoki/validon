@@ -4,7 +4,7 @@
  * Validon設定
  */
 // 定義がない場合の警告（true:する false:しない）
-$_VALIDON_ENV['NOTICE'] = false;
+$_VALIDON_ENV['NOTICE'] = true;
 // 値ごとの共通事前バリデート
 // $_VALIDON_ENV['BEFORE'] = function($key, &$param, &$data=null){ error_log('<<< BEFORE >>>'); };
 // 値ごとの共通事後バリデート
@@ -48,6 +48,14 @@ $_VALIDON['age'] = function(&$param, &$data=null)
 };
 
 /**
+ * 好きな食べ物（任意）
+ */
+$_VALIDON['food'] = function(&$param, &$data=null)
+{
+    return;
+};
+
+/**
  * お問い合わせ内容
  */
 $_VALIDON['content'] = function(&$param, &$data=null)
@@ -60,7 +68,7 @@ $_VALIDON['content'] = function(&$param, &$data=null)
 /**
  * サイズ選択（ラジオボタン）
  */
-$_VALIDON['size[]'] = function(&$params, &$data=null)
+$_VALIDON['size'] = function(&$params, &$data=null)
 {
     // 条件
     if(!count($params)) return '必須項目です。';
