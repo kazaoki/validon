@@ -35,10 +35,38 @@ if('application/json'===$_SERVER['CONTENT_TYPE']) {
  * $result_set['errors'] ... エラーメッセージがキー・バリューでセットされてくる
  * $result_set['changes'] ... 変更のあるパラメータのキー名のみが配列で入ってくる
  */
-function validon($params, $fulldata=null)
+function validon(&$params, $fulldata=null)
 {
     global $_VALIDON;
     global $_VALIDON_ENV;
+
+    // アップロードファイルが一時アップされている場合はその情報をセット
+    foreach($params as $key=>$value) {
+        if(array_key_exists($key, $_FILES)) {
+            $params[$key] = $_FILES[$key];
+        }
+    }
+
+    // PHPアップローダのデータ配列を整理する
+    if(count($_FILES)) {
+        foreach($_FILES as $input_name=>$file) {
+            $files = [];
+            $keys = array_keys($file);
+            $count = count($file['name']);
+            if(is_array($file['name'])) {
+                for ($i=0; $i<$count; $i++) {
+                    foreach ($keys as $key) {
+                        $files[$i][$key] = $file[$key][$i];
+                    }
+                }
+                $params[$input_name] = $files;
+            } else {
+                $params[$input_name] = $file;
+            }
+        }
+    }
+
+// var_dump($params);
 
     // 変更前値の退避
     $original_params = $params;
@@ -49,12 +77,8 @@ function validon($params, $fulldata=null)
     // 各種処理
     foreach($params as $key=>$value) {
 
-        // 設定の対応キーは'[]'もアリのキーなので配列ならここで'[]'つけておく。（JS/Ajaxからなら[]ついてるけどPHPからはついてないので）
-        if(is_array($value) && !preg_match('/\]$/', $key)) {
-            $validonkey = $key . '[]';
-        } else {
-            $validonkey = $key;
-        }
+        // キーに「[]」がついてたら削除して設定キーとす
+        $validonkey = preg_replace('/\[.*\]$/', '', $key);
 
         // 全ての値をバリデートする前にフック実行
         if(is_callable(@$_VALIDON_ENV['BEFORE'])) {

@@ -94,9 +94,18 @@ extract ($_POST);
         <td><?= htmlspecialchars(implode('、', $list)) ?></td>
       </tr>
       <tr>
-        <td>ファイル選択</td>
-        <td>-</td>
-        <td>-</td>
+        <td>シングルファイル選択</td>
+        <td>docfile</td>
+        <td><?= htmlspecialchars($docfile['name']) ?></td>
+      </tr>
+      <tr>
+        <td>マルチファイル選択</td>
+        <td>picfiles</td>
+        <td>
+          <?php foreach($picfiles as $picfile) { ?>
+            <div><?= htmlspecialchars($picfile['name']) ?></div>
+          <?php } ?>
+        </td>
       </tr>
       <tr>
         <td>その他特殊</td>

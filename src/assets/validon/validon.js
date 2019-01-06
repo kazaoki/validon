@@ -58,29 +58,33 @@ function Validon(opt)
 			validon.form.attachEvent('onsubmit', submitEvent)
 		}
 
-		// 要素ごとのイベント発火の標準設定（ラジオ、チェックボックス、プルダウンはonChange、それ以外はonBlurとす）
-		// 個別に指定したい場合は data-validon-on が優先になる。
+		// 要素ごとのイベント発火が有効の場合、各要素に `onChange` が登録され都度バリデートされるようになる。
+		// ※要素ごとに設定も可能（例： data-validon-on='change,keydown' ← カンマで複数指定可
 		if(validon.eachfire) {
 			var elems = validon.form.querySelectorAll('[name]')
 			for(var i=0; i<elems.length; i++) {
-				if(elems[i].getAttribute('data-validon-on')) continue
-				if(elems[i].type==='radio' || elems[i].type==='checkbox' || elems[i].tagName==='SELECT') {
-					elems[i].setAttribute('data-validon-on', 'change')
-				} else {
-					elems[i].setAttribute('data-validon-on', 'blur')
+				var eventName = elems[i].getAttribute('data-validon-on')
+				if(!eventName) {
+					if(
+						elems[i].type==='radio' ||
+						elems[i].type==='checkbox' ||
+						elems[i].type==='file' ||
+						elems[i].tagName==='SELECT'
+					) {
+						eventName = 'change'
+					} else {
+						eventName = 'blur'
+					}
 				}
-			}
-		}
-
-		// 個別イベント登録
-		var elems = validon.form.querySelectorAll('[data-validon-on]')
-		for(var i=0; i<elems.length; i++) {
-			var elem = elems[i]
-			var eventName = elem.getAttribute('data-validon-on')
-			if (elem.addEventListener) {
-				elem.addEventListener(eventName, function(e){ validon.send(this.name) }, false)
-			} else if (elem.attachEvent) {
-				elem.attachEvent('on'+eventName, function(e){ validon.send(e.srcElement.name) })
+				var eventNames = eventName.split(/\s*\,\s*/)
+				for(var j=0; j<eventNames.length; j++) {
+					var event = eventNames[j];
+					if (elems[i].addEventListener) {
+						elems[i].addEventListener(event, function(e){ validon.send(this.name) }, false)
+					} else if (elems[i].attachEvent) {
+						elems[i].attachEvent('on'+event, function(e){ validon.send(e.srcElement.name) })
+					}
+				}
 			}
 		}
 	};
@@ -114,34 +118,59 @@ Validon.prototype = {
 		json.params = []
 		var params = {}
 		var elements = validon.form.querySelectorAll('[name]')
+		var hasFileApi = !!window.File;
 		for(var i=0; i<elements.length; i++) {
 			var name = elements[i].getAttribute('name')
 			if('undefined'!==typeof params[name]) continue
+			// ラジオボタン
 			if(elements[i].type==='radio') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
-				for(i=0; i<lump.length; i++) {
-					if(lump[i].checked) {
-						params[name] = lump[i].value
+				for(var j=0; j<lump.length; j++) {
+					if(lump[j].checked) {
+						params[name] = lump[j].value
 						break
 					}
 				}
-			} else if(elements[i].type==='checkbox') {
+			}
+			// チェックボックス
+			else if(elements[i].type==='checkbox') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
 				params[name] = []
-				for(i=0; i<lump.length; i++) {
-					if(lump[i].checked) {
-						params[name].push(lump[i].value)
+				for(var j=0; j<lump.length; j++) {
+					if(lump[j].checked) {
+						params[name].push(lump[j].value)
 					}
 				}
-			} else if(elements[i].tagName==='SELECT') {
+			}
+			// セレクトプルダウン
+			else if(elements[i].tagName==='SELECT') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
 				params[name] = []
-				for(i=0; i<lump.length; i++) {
-					if(lump[i].selected) {
-						params[name].push(lump[i].value)
+				for(var j=0; j<lump.length; j++) {
+					if(lump[j].selected) {
+						params[name].push(lump[j].value)
 					}
 				}
-			} else {
+			}
+			// ファイル選択（FileAPIが使用できる場合は name,type,size をセットする）
+			else if(elements[i].type==='file' && hasFileApi) {
+				var element = validon.form.querySelector('[name="'+name+'"]')
+				var files = new Array();
+				for(var j=0; j<element.files.length; j++){
+					files.push({
+						name: element.files[j]['name'],
+						type: element.files[j]['type'],
+						size: element.files[j]['size'],
+					})
+				}
+				if(name.match(/\]$/)) {
+					params[name] = files
+				} else {
+					params[name] = files[0]
+				}
+			}
+			// その他の要素
+			else {
 				params[name] = elements[i].value
 			}
 		}

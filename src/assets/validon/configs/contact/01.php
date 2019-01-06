@@ -4,7 +4,7 @@
  * Validon設定
  */
 // 定義がない場合の警告（true:する false:しない）
-$_VALIDON_ENV['NOTICE'] = true;
+$_VALIDON_ENV['NOTICE'] = false;
 // 値ごとの共通事前バリデート
 // $_VALIDON_ENV['BEFORE'] = function($key, &$value, &$data=null){ error_log('<<< BEFORE >>>'); };
 // 値ごとの共通事後バリデート
@@ -77,7 +77,7 @@ $_VALIDON['size'] = function(&$values, &$data=null)
 /**
  * 色選択（チェックボックス）
  */
-$_VALIDON['color[]'] = function(&$values, &$data=null)
+$_VALIDON['color'] = function(&$values, &$data=null)
 {
     // 条件
     if(!count($values)) return '必須項目です。';
@@ -86,8 +86,37 @@ $_VALIDON['color[]'] = function(&$values, &$data=null)
 /**
  * プルダウン
  */
-$_VALIDON['list[]'] = function(&$values, &$data=null)
+$_VALIDON['list'] = function(&$values, &$data=null)
 {
     // 条件
     if(!count($values)) return '必須項目です。';
+};
+
+/**
+ * シングルファイル
+ */
+$_VALIDON['docfile'] = function(&$value, &$data=null)
+{
+    // 条件
+    if(is_array($value)) {
+        if($value['size']>1024*1024) return '1MB 超えてるファイルは控えて下さい。';
+    }
+};
+
+/**
+ * マルチファイル
+ */
+$_VALIDON['picfiles'] = function(&$values, &$data=null)
+{
+    // 条件
+    $errors = [];
+    $size_total = 0;
+    if(is_array($values)) {
+        foreach($values as $value) {
+            if(is_array($value)) {
+                $size_total += $value['size'];
+            }
+        }
+        if($size_total > 1024*1024) return 'ファイルサイズ合計が 1MB を超えています。';
+    }
 };

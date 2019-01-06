@@ -13,7 +13,7 @@
 
 <body>
 
-<form action="check.php" method="post" id="form">
+<form action="check.php" method="post" id="form" enctype="multipart/form-data">
   <section>
     <h2>テキスト</h2>
     <section>
@@ -25,6 +25,7 @@
     <section>
       *年齢：<input type="text" name="age" value=""><br>
     </section>
+    <section>
       好きな食べ物（任意）：<input type="text" name="food" value=""><br>
     </section>
   </section>
@@ -66,7 +67,12 @@ test3</textarea><br>
 
   <section>
     <h2>ファイル選択</h2>
-    ※後で考える
+    <section>
+      シングルファイル：<input type="file" name="docfile">
+    </section>
+    <section>
+      マルチファイル：<input type="file" name="picfiles[]" accept="image/*" multiple>
+    </section>
   </section>
 
   <section>

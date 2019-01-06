@@ -160,12 +160,69 @@ $_VALIDON['age'] = function(&$value, &$data=null)
 （このエラーメッセージがHTML側に表示されるものです）
 
 
+### ファイル選択について
+ファイル選択要素は、設定ファイル中にて以下の値が参照できます。
+
+|項目|JS/Ajaxから|PHPから|
+|---|---|---|
+|ファイル名|name|name|
+|ファイルタイプ|type|type|
+|容量(byte)|size|size|
+|一時ファイル|-|tmp_name|
+
+※JS/Ajaxからの通信では一時ファイルは作られません。
+
+※古いブラウザ（IE10未満など）ではFileAPIが使えず、JSからは単純なファイル名のみが文字列でセットされますので、ブラウザチェックとPHPチェックとで差異が出てきてしまいますのでご注意下さい。
+
+```php
+$_VALIDON['picture'] = function(&$value, &$data=null)
+{
+    // 条件
+    if(is_array($value)) {
+        if($value['size']>1024*1024) return '1MB 超えてるファイルは控えて下さい。';
+    }
+};
+
+```
+
+### 複数のファイル選択について
+配列になって入って来ますので都度ループしてください。
+
+```php
+$_VALIDON['picfiles'] = function(&$values, &$data=null)
+{
+    // 条件
+    $errors = [];
+    $size_total = 0;
+    if(is_array($values)) {
+        foreach($values as $value) {
+            if(is_array($value)) {
+                $size_total += $value['size'];
+            }
+        }
+        if($size_total > 1024*1024) return 'ファイルサイズ合計が 1MB を超えています。';
+    }
+};
+```
+
+
 ## リファレンス
 
 
 
 
 （以下、ドキュメント準備中...
+
+### その他のValidon設定
+
+#### JSロード設定詳細
+#### PHPバリデート設定詳細
+
+### 特殊なHTML属性
+
+#### `data-validon-on`
+
+#### `data-validon-errorholder`
 
 ### jsonの形
 
