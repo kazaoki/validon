@@ -47,6 +47,9 @@ function Validon(opt)
 			return false
 		}
 
+		// 対象フォームがクリック不可になっていたら困るので戻し
+		validon.form.style.pointerEvents = null
+
 		// submitイベント登録
 		var submitEvent = function(event){
 			(event.preventDefault) ? event.preventDefault() : event.returnValue = false
@@ -114,6 +117,9 @@ Validon.prototype = {
 			if(false === validon.startFunc(json)) return false
 		}
 
+		// submit中は要素を全てクリックできないように
+		if(typeof elems === 'undefined') validon.form.style.pointerEvents = 'none'
+
 		// 値まとめ
 		json.params = []
 		var params = {}
@@ -179,7 +185,7 @@ Validon.prototype = {
 		// 対象要素まとめ
 		json.targets = []
 		json.isSubmit = false
-		if(typeof elems ==='undefined') {
+		if(typeof elems === 'undefined') {
 			// submitバリデートの場合全ての値
 			json.isSubmit = true
 			json.targets = Object.keys(json.params)
@@ -202,87 +208,93 @@ Validon.prototype = {
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function()
 		{
-			if(4 === this.readyState && 200 === this.status) {
-				json = this.response
-				if('undefined' === typeof this.response) {
-					json = JSON.parse(this.responseText)
-				}
-
-				// フック：afterFunc
-				if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
-					if(false === validon.afterFunc(json)) return false
-				}
-
-				// ターゲットのみ値の変更があれば反映する
-				if(json.changes && json.changes.length) {
-					for(var i=0; i<json.changes.length; i++) {
-						var name = json.changes[i]
-						var elem = validon.form.querySelector('[name="'+name+'"]')
-						if(
-							'INPUT' === elem.tagName &&
-							('checkdradiobox' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
-						) {
-							var elems = validon.form.querySelectorAll('[name="'+name+'"]')
-							for(var j=0; j<elems.length; j++) {
-								elems[j].checked = -1 !== json.params[name].indexOf(elems[j].value)
-							}
-						} else if('SELECT' === elem.tagName) {
-							var options = elem.querySelectorAll('option')
-							for(var j=0; j<options.length; j++) {
-								options[j].selected = -1 !== json.params[name].indexOf(options[j].value)
-							}
-						} else {
-							elem.value = json.params[name]
-						}
+			if(4 === this.readyState) {
+				if(200 === this.status) {
+					json = this.response
+					if('undefined' === typeof this.response) {
+						json = JSON.parse(this.responseText)
 					}
-				}
 
-				// ターゲットのみエラーがあれば反映する
-				if(json.targets && json.targets.length) {
-					for(var i=0; i<json.targets.length; i++) {
-						var name = json.targets[i]
-						var elem = validon.form.querySelector('[name="'+name+'"]')
-						var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
-						if(!errorholder.length) {
-							var parent = elem.parentNode
-							while (parent.tagName !== validon.errorgroup.toUpperCase()) {
-								parent = parent.parentNode;
-								if('undefined' === typeof parent.tagName) {
-									parent = elem.parentNode
-									break
+					// フック：afterFunc
+					if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
+						if(false === validon.afterFunc(json)) return false
+					}
+
+					// ターゲットのみ値の変更があれば反映する
+					if(json.changes && json.changes.length) {
+						for(var i=0; i<json.changes.length; i++) {
+							var name = json.changes[i]
+							var elem = validon.form.querySelector('[name="'+name+'"]')
+							if(
+								'INPUT' === elem.tagName &&
+								('checkdradiobox' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
+							) {
+								var elems = validon.form.querySelectorAll('[name="'+name+'"]')
+								for(var j=0; j<elems.length; j++) {
+									elems[j].checked = -1 !== json.params[name].indexOf(elems[j].value)
 								}
+							} else if('SELECT' === elem.tagName) {
+								var options = elem.querySelectorAll('option')
+								for(var j=0; j<options.length; j++) {
+									options[j].selected = -1 !== json.params[name].indexOf(options[j].value)
+								}
+							} else {
+								elem.value = json.params[name]
 							}
-							errorholder = document.createElement('div')
-							errorholder.setAttribute('data-validon-errorholder', name)
-							if(validon.errorposition === 'append') {
-								parent.appendChild(errorholder)
-							} else if(validon.errorposition === 'prepend') {
-								parent.insertBefore(errorholder, parent.childNodes[0]);
-							}
-							errorholder = new Array(errorholder)
-						}
-						var message = ''
-						if(json.errors && 'undefined' !== typeof json.errors[name]) {
-							message = validon.errortag.replace(/\$message/, json.errors[name])
-						}
-						for(var j=0; j<errorholder.length; j++) {
-							errorholder[j].innerHTML = message
 						}
 					}
-				}
 
-				// 第二引数に関数が指定されていたらここで実行
-				if(callback && 'function' === typeof callback) {
-					callback(json)
-				}
+					// ターゲットのみエラーがあれば反映する
+					if(json.targets && json.targets.length) {
+						for(var i=0; i<json.targets.length; i++) {
+							var name = json.targets[i]
+							var elem = validon.form.querySelector('[name="'+name+'"]')
+							var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+							if(!errorholder.length) {
+								var parent = elem.parentNode
+								while (parent.tagName !== validon.errorgroup.toUpperCase()) {
+									parent = parent.parentNode;
+									if('undefined' === typeof parent.tagName) {
+										parent = elem.parentNode
+										break
+									}
+								}
+								errorholder = document.createElement('div')
+								errorholder.setAttribute('data-validon-errorholder', name)
+								if(validon.errorposition === 'append') {
+									parent.appendChild(errorholder)
+								} else if(validon.errorposition === 'prepend') {
+									parent.insertBefore(errorholder, parent.childNodes[0]);
+								}
+								errorholder = new Array(errorholder)
+							}
+							var message = ''
+							if(json.errors && 'undefined' !== typeof json.errors[name]) {
+								message = validon.errortag.replace(/\$message/, json.errors[name])
+							}
+							for(var j=0; j<errorholder.length; j++) {
+								errorholder[j].innerHTML = message
+							}
+						}
+					}
 
-				// フック：finsihFunc
-				if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
-					if(false === validon.finishFunc(json)) return false
-				}
+					// 第二引数に関数が指定されていたらここで実行
+					if(callback && 'function' === typeof callback) {
+						callback(json)
+					}
 
-				// エラーが一つも無ければsubmitする（isSubmit時のみ）
-				if(!json.errors && json.isSubmit) validon.form.submit()
+					// フック：finsihFunc
+					if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
+						if(false === validon.finishFunc(json)) return false
+					}
+
+					// エラーが一つも無ければsubmitする（isSubmit時のみ）
+					if(!json.errors && json.isSubmit) validon.form.submit()
+					else {
+						// エラーがある場合はsubmit中のクリック不可を戻す
+						if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+					}
+				}
 			}
 		}
 		xhr.open('POST', validon.urlPath+'validon.php')
