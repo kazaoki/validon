@@ -135,3 +135,35 @@ function __IS_TIME($string)
         return false;
     }
 }
+
+/**
+ * URLバリデータ
+ */
+function __IS_URL($string)
+{
+    return preg_match('/^https?\:\/\//', $string);
+}
+
+/**
+ * メールアドレスバリデータ
+ */
+function __IS_EMAIL($string, $net=false)
+{
+	$mail_regex1 = '/(?:[-!#-\'*+\/-9=?A-Z^-~]+\.?(?:\.[-!#-\'*+\/-9=?A-Z^-~]+)*|"(?:[!#-\[\]-~]|\\\\[\x09 -~])*")@[-!#-\'*+\/-9=?A-Z^-~]+(?:\.[-!#-\'*+\/-9=?A-Z^-~]+)*/';
+	$mail_regex2 = '/^[^\@]+\@[^\@]+$/';
+	$error = false;
+	if(preg_match($mail_regex1, $string) && preg_match($mail_regex2, $string)) {
+		if(preg_match('/[^a-zA-Z0-9\!\"\#\$\%\&\'\(\)\=\~\|\-\^\\\@\[\;\:\]\,\.\/\\\<\>\?\_\`\{\+\*\} ]/', $string)) { $error = true; }
+		if( ! preg_match('/\.[a-z]+$/', $string)) { $error = true; }
+	} else {
+		$error = true;
+	}
+	if($net){
+		$arr = explode('@', $string);
+		$host = str_replace(array('[', ']'), '', array_pop($arr));
+		if(!(checkdnsrr($host, 'MX') || checkdnsrr($host, 'A') || checkdnsrr($host, 'AAAA'))){
+			$error = true;
+		}
+	}
+	return !$error;
+}
