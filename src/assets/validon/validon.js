@@ -142,7 +142,7 @@ Validon.prototype = {
 			// チェックボックス
 			else if(elements[i].type==='checkbox') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
-				params[name] = []
+				params[name] = new Array();
 				for(var j=0; j<lump.length; j++) {
 					if(lump[j].checked) {
 						params[name].push(lump[j].value)
@@ -152,10 +152,22 @@ Validon.prototype = {
 			// セレクトプルダウン
 			else if(elements[i].tagName==='SELECT') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
-				params[name] = []
-				for(var j=0; j<lump.length; j++) {
-					if(lump[j].selected) {
-						params[name].push(lump[j].value)
+				if(name.match(/\]$/)) {
+					// マルチ
+					params[name] = new Array();
+					for(var j=0; j<lump.length; j++) {
+						if(lump[j].selected) {
+							params[name].push(lump[j].value)
+						}
+					}
+				} else {
+					// シングル
+					params[name] = null
+					for(var j=0; j<lump.length; j++) {
+						if(lump[j].selected) {
+							params[name] = lump[j].value
+							break
+						}
 					}
 				}
 			}
