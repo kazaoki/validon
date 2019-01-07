@@ -131,6 +131,7 @@ Validon.prototype = {
 			// ラジオボタン
 			if(elements[i].type==='radio') {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
+				params[name] = null
 				for(var j=0; j<lump.length; j++) {
 					if(lump[j].checked) {
 						params[name] = lump[j].value

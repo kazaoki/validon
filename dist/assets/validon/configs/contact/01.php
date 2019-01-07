@@ -68,10 +68,10 @@ $_VALIDON['content'] = function(&$value, &$data=null)
 /**
  * サイズ選択（ラジオボタン）
  */
-$_VALIDON['size'] = function(&$values, &$data=null)
+$_VALIDON['size'] = function(&$value, &$data=null)
 {
     // 条件
-    if(!count($values)) return '必須項目です。';
+    if(!strlen($value)) return '必須項目です。';
 };
 
 /**

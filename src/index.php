@@ -17,7 +17,7 @@
   <section>
     <h2>テキスト</h2>
     <section>
-      *お名前：<input type="text" name="name" value="山田 太郎" data-validon-on="keyup"> ※これのみ keyup イベントで発火<br>
+      *お名前：<input type="text" name="name" value="山田 太郎" data-validon-on="blur,keyup"> ※これのみ keyup イベントで発火<br>
     </section>
     <section>
       *カナ：<input type="text" name="kana" value="ヤマダ タロウ"><br>
@@ -41,7 +41,7 @@ test3</textarea><br>
   <section>
     <h2>サイズ選択（ラジオボタン）</h2>
     <label><input type="radio" name="size" value="大"> 大</label><br>
-    <label><input type="radio" name="size" value="中" checked> 中</label><br>
+    <label><input type="radio" name="size" value="中"> 中</label><br>
     <label><input type="radio" name="size" value="小"> 小</label><br>
   </section>
 
