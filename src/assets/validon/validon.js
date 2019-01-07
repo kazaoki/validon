@@ -214,7 +214,11 @@ Validon.prototype = {
 
 		// フック：beforeFunc
 		if(validon.beforeFunc && 'function' === typeof validon.beforeFunc) {
-			if(false === validon.beforeFunc(json)) return false
+			if(false === validon.beforeFunc(json)) {
+				// クリック不可を戻してイベントキャンセル
+				if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+				return false
+			}
 		}
 
 		// Ajax
@@ -230,7 +234,11 @@ Validon.prototype = {
 
 					// フック：afterFunc
 					if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
-						if(false === validon.afterFunc(json)) return false
+						if(false === validon.afterFunc(json)) {
+							// クリック不可を戻してイベントキャンセル
+							if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+							return false
+						}
 					}
 
 					// ターゲットのみ値の変更があれば反映する
@@ -298,7 +306,11 @@ Validon.prototype = {
 
 					// フック：finsihFunc
 					if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
-						if(false === validon.finishFunc(json)) return false
+						if(false === validon.finishFunc(json)) {
+							// クリック不可を戻してイベントキャンセル
+							if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+							return false
+						}
 					}
 
 					// エラーが一つも無ければsubmitする（isSubmit時のみ）
