@@ -1,5 +1,8 @@
 <?php
 
+global $_VALIDON;
+global $_VALIDON_ENV;
+
 /**
  * Validon設定
  */
