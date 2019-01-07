@@ -66,8 +66,6 @@ function validon(&$params, $fulldata=null)
         }
     }
 
-// var_dump($params);
-
     // 変更前値の退避
     $original_params = $params;
 
@@ -112,4 +110,28 @@ function validon(&$params, $fulldata=null)
     @$fulldata['changes'] = @$changes;
 
     return $fulldata;
+}
+
+/**
+ * 日付バリデータ
+ */
+function __IS_DATE($string)
+{
+    if(preg_match('/^(\d+)[\-\/](\d+)[\-\/](\d+)$/', $string, $matches)) {
+        return checkdate($matches[2], $matches[3], $matches[1]);
+    } else {
+        return false;
+    }
+}
+
+/**
+ * 時間バリデータ
+ */
+function __IS_TIME($string)
+{
+    if(preg_match('/^(\d+)[\:](\d+)$/', $string, $matches)) {
+      return (($matches[1]>=0 && $matches[1]<=23) && ($matches[2]>=0 && $matches[2]<=59));
+    } else {
+        return false;
+    }
 }
