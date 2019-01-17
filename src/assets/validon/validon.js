@@ -236,7 +236,7 @@ Validon.prototype = {
 			if(4 === this.readyState) {
 				if(200 === this.status) {
 					json = this.response
-					if('undefined' === typeof this.response) {
+					if('string' === typeof this.response) {
 						json = JSON.parse(this.responseText)
 					}
 
