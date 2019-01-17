@@ -256,7 +256,7 @@ Validon.prototype = {
 							var elem = validon.form.querySelector('[name="'+name+'"]')
 							if(
 								'INPUT' === elem.tagName &&
-								('checkdradiobox' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
+								('radio' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
 							) {
 								var elems = validon.form.querySelectorAll('[name="'+name+'"]')
 								for(var j=0; j<elems.length; j++) {
