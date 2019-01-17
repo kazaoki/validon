@@ -91,8 +91,6 @@ test3</textarea><br>
 
 </form>
 
-</body>
-
 <script src="assets/validon/validon.js"></script>
 <script>
 var validon = new Validon({
@@ -123,4 +121,5 @@ var validon = new Validon({
 })
 </script>
 
+</body>
 </html>
