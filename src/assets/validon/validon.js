@@ -190,7 +190,15 @@ Validon.prototype = {
 			}
 			// その他の要素
 			else {
-				params[name] = elements[i].value
+				if(name.match(/\]$/)) {
+					var lump = validon.form.querySelectorAll('[name="'+name+'"]')
+					params[name] = new Array();
+					for(var j=0; j<lump.length; j++) {
+						params[name].push(lump[j].value)
+					}
+				} else {
+					params[name] = elements[i].value
+				}
 			}
 		}
 		json.params = params

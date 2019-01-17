@@ -6,6 +6,8 @@
 if('application/json'===$_SERVER['CONTENT_TYPE']) {
     $json = json_decode(file_get_contents("php://input"), true) ?: [];
 
+    error_log(print_r($json, 1));
+
     // 指定のバリデート設定をロード
     $configfile = __DIR__.'/configs/'.$json['config'].'.php';
     if(!file_exists($configfile)) throw new Exception('Validon error: not found config file at '.$configfile);

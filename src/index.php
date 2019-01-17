@@ -14,6 +14,10 @@
 <body>
 
 <form action="check.php" method="post" id="form" enctype="multipart/form-data">
+  <input type="hidden" name="hide_data[]" value="aaa">
+  <input type="hidden" name="hide_data[]" value="bbb">
+  <input type="hidden" name="hide_data[]" value="ccc">
+  <input type="hidden" name="hide_data2" value="XXX">
   <section>
     <h2>テキスト</h2>
     <section>
