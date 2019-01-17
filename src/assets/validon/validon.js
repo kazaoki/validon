@@ -48,7 +48,7 @@ function Validon(opt)
 		}
 
 		// 対象フォームがクリック不可になっていたら困るので戻し
-		validon.form.style.pointerEvents = null
+		validon.form.style.pointerEvents = ''
 
 		// submitイベント登録
 		var submitEvent = function(event){
@@ -224,7 +224,7 @@ Validon.prototype = {
 		if(validon.beforeFunc && 'function' === typeof validon.beforeFunc) {
 			if(false === validon.beforeFunc(json)) {
 				// クリック不可を戻してイベントキャンセル
-				if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+				if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 				return false
 			}
 		}
@@ -236,7 +236,7 @@ Validon.prototype = {
 			if(4 === this.readyState) {
 				if(200 === this.status) {
 					json = this.response
-					if('string' === typeof this.response) {
+					if('undefined' === typeof json || 'string' === typeof json) {
 						json = JSON.parse(this.responseText)
 					}
 
@@ -244,14 +244,14 @@ Validon.prototype = {
 					if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
 						if(false === validon.afterFunc(json)) {
 							// クリック不可を戻してイベントキャンセル
-							if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+							if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 							return false
 						}
 					}
 
 					// ターゲットのみ値の変更があれば反映する
 					if(json.changes && json.changes.length) {
-						for(var i=0; i<json.changes.length; i++) {
+							for(var i=0; i<json.changes.length; i++) {
 							var name = json.changes[i]
 							var elem = validon.form.querySelector('[name="'+name+'"]')
 							if(
@@ -316,7 +316,7 @@ Validon.prototype = {
 					if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
 						if(false === validon.finishFunc(json)) {
 							// クリック不可を戻してイベントキャンセル
-							if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+							if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 							return false
 						}
 					}
@@ -325,7 +325,7 @@ Validon.prototype = {
 					if(!json.errors && json.isSubmit) validon.form.submit()
 					else {
 						// エラーがある場合はsubmit中のクリック不可を戻す
-						if(typeof elems === 'undefined') validon.form.style.pointerEvents = null
+						if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 					}
 				}
 			}
