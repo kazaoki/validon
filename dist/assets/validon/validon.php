@@ -3,7 +3,7 @@
 /**
  * JSON受信したならJavaScriptからのAjax通信
  */
-if('application/json'===$_SERVER['CONTENT_TYPE']) {
+if('application/json' === @$_SERVER['CONTENT_TYPE']) {
     $json = json_decode(file_get_contents("php://input"), true) ?: [];
 
     // 指定のバリデート設定をロード
