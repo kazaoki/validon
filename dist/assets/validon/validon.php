@@ -40,8 +40,14 @@ function validon(&$params, $fulldata=null)
     global $_VALIDON;
     global $_VALIDON_ENV;
 
+    // 回すべきキー
+    $keys = array_keys('application/json' === @$_SERVER['CONTENT_TYPE']
+        ? $params
+        : $_VALIDON
+    );
+
     // アップロードファイルが一時アップされている場合はその情報をセット
-    foreach($params as $key=>$value) {
+    foreach($keys as $key) {
         if(array_key_exists($key, $_FILES)) {
             $params[$key] = $_FILES[$key];
         }
@@ -73,8 +79,7 @@ function validon(&$params, $fulldata=null)
     if(!$fulldata) $fulldata = ['params' => $params];
 
     // 各種処理
-    foreach($_VALIDON as $key=>$value) {
-
+    foreach($keys as $key) {
         // キーに「[]」がついてたら削除して設定キーとす
         $validonkey = preg_replace('/\[.*\]$/', '', $key);
 
