@@ -73,7 +73,7 @@ function validon(&$params, $fulldata=null)
     if(!$fulldata) $fulldata = ['params' => $params];
 
     // 各種処理
-    foreach($params as $key=>$value) {
+    foreach($_VALIDON as $key=>$value) {
 
         // キーに「[]」がついてたら削除して設定キーとす
         $validonkey = preg_replace('/\[.*\]$/', '', $key);
