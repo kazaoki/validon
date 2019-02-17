@@ -83,6 +83,11 @@ function validon(&$params, $fulldata=null)
         // キーに「[]」がついてたら削除して設定キーとす
         $validonkey = preg_replace('/\[.*\]$/', '', $key);
 
+        // 自動トリム実行
+        if(@$_VALIDON_ENV['TRIM']) {
+            $params[$key] = __TRIM($params[$key]);
+        }
+
         // 全ての値をバリデートする前にフック実行
         if(is_callable(@$_VALIDON_ENV['BEFORE'])) {
             $_VALIDON_ENV['BEFORE']($key, $params[$key], $fulldata);
@@ -171,4 +176,20 @@ function __IS_EMAIL($string, $net=false)
 		}
 	}
 	return !$error;
+}
+
+/**
+ * 前後の空白トリム（複数行の場合は最後の改行は１つのみ残す）
+ */
+function __TRIM($data)
+{
+    if(is_array($data)) {
+        foreach($data as $value) {
+            $value = __TRIM($value);
+        }
+    } else {
+        $data = preg_replace('/\A[\p{C}\p{Z}]++|[\p{C}\p{Z}]++\z/u', '', $data);
+        if(preg_match('/[\r\n]/s', $data)) $data .= "\n";
+    }
+    return $data;
 }

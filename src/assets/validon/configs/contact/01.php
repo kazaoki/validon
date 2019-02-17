@@ -8,6 +8,8 @@ global $_VALIDON_ENV;
  */
 // 定義がない場合の警告（true:する false:しない）
 $_VALIDON_ENV['NOTICE'] = false;
+// 自動トリム機能
+$_VALIDON_ENV['TRIM'] = true;
 // 値ごとの共通事前バリデート
 // $_VALIDON_ENV['BEFORE'] = function($key, &$value, &$data=null){ error_log('<<< BEFORE >>>'); };
 // 値ごとの共通事後バリデート
