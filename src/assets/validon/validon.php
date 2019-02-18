@@ -84,7 +84,7 @@ function validon(&$params, $fulldata=null)
         $validonkey = preg_replace('/\[.*\]$/', '', $key);
 
         // 自動トリム実行
-        if(@$_VALIDON_ENV['TRIM']) {
+        if(@$_VALIDON_ENV['TRIM'] && isset($params[$key])) {
             $params[$key] = __TRIM($params[$key]);
         }
 
