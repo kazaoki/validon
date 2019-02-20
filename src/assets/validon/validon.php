@@ -139,8 +139,12 @@ function __IS_DATE($string)
  */
 function __IS_TIME($string)
 {
-    if(preg_match('/^(\d+)[\:](\d+)$/', $string, $matches)) {
-      return (($matches[1]>=0 && $matches[1]<=23) && ($matches[2]>=0 && $matches[2]<=59));
+    if(preg_match('/^(\d+)\:(\d+)(\:(\d+))?$/', $string, $matches)) {
+        return (
+            ($matches[1]>=0 && $matches[1]<=23) &&
+            ($matches[2]>=0 && $matches[2]<=59) &&
+            (isset($matches[3]) ? ($matches[4]>=0 && $matches[4]<=59) : true)
+        );
     } else {
         return false;
     }

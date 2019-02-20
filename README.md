@@ -12,6 +12,9 @@ PHPフォームを作成する時など、JavaScriptとPHPとで入力チェッ�
 また、jQuery依存なしで、最新ChromeとIE8で動作確認をしています。
 （PHPのバージョンは5.5以上、7以上を推奨とします）
 
+※IE8以下にメディアクエリーを対応させるための以下のJSを読み込ませるとValidonが機能しなくなる問題があります。  
+https://github.com/heathcliff/css3-mediaqueries-js
+
 ## 読み方
 
 ばりどん。
