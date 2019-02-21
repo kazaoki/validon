@@ -57,12 +57,12 @@ function validon(&$params, $fulldata=null)
     if(count($_FILES)) {
         foreach($_FILES as $input_name=>$file) {
             $files = [];
-            $keys = array_keys($file);
+            $fkeys = array_keys($file);
             $count = count($file['name']);
             if(is_array($file['name'])) {
                 for ($i=0; $i<$count; $i++) {
-                    foreach ($keys as $key) {
-                        $files[$i][$key] = $file[$key][$i];
+                    foreach ($fkeys as $fkey) {
+                        $files[$i][$fkey] = $file[$fkey][$i];
                     }
                 }
                 $params[$input_name] = $files;
