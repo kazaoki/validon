@@ -42,8 +42,8 @@ function validon(&$params, $fulldata=null)
 
     // 回すべきキー
     $keys = array_keys('application/json' === @$_SERVER['CONTENT_TYPE']
-        ? $params
-        : $_VALIDON
+        ? $params // Ajaxなら入ってきた値のみチェック
+        : $_VALIDON // それ以外（PHPからのチェック等）の場合は設定してる全値をチェック
     );
 
     // アップロードファイルが一時アップされている場合はその情報をセット
@@ -56,13 +56,11 @@ function validon(&$params, $fulldata=null)
     // PHPアップローダのデータ配列を整理する
     if(count($_FILES)) {
         foreach($_FILES as $input_name=>$file) {
-            $files = [];
-            $fkeys = array_keys($file);
-            $count = count($file['name']);
             if(is_array($file['name'])) {
-                for ($i=0; $i<$count; $i++) {
-                    foreach ($fkeys as $fkey) {
-                        $files[$i][$fkey] = $file[$fkey][$i];
+                $files = [];
+                foreach(array_keys($file) as $fkey) {
+                    foreach(array_keys($file[$fkey]) as $numkey) {
+                        $files[$numkey][$fkey] = $file[$fkey][$numkey];
                     }
                 }
                 $params[$input_name] = $files;
