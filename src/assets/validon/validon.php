@@ -190,7 +190,7 @@ function __TRIM($data)
             $value = __TRIM($value);
         }
     } else {
-        $data = preg_replace('/\A[\p{Z}]++|[\p{Z}]++\z/u', '', $data);
+        $data = preg_replace('/\A[ \t\n\r\0\x0B\p{Z}]++|[ \t\n\r\0\x0B\p{Z}]++\z/u', '', $data);
         if(preg_match('/[\r\n]/s', $data)) $data .= "\n";
     }
     return $data;
