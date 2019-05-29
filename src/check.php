@@ -56,54 +56,54 @@ extract ($_POST);
       <tr>
         <td>お名前</td>
         <td>name</td>
-        <td><?= htmlspecialchars($name) ?></td>
+        <td><?php echo htmlspecialchars($name) ?></td>
       </tr>
       <tr>
         <td>カナ</td>
         <td>kana</td>
-        <td><?= htmlspecialchars($kana) ?></td>
+        <td><?php echo htmlspecialchars($kana) ?></td>
       </tr>
       <tr>
         <td>年齢</td>
         <td>age</td>
-        <td><?= htmlspecialchars($age) ?></td>
+        <td><?php echo htmlspecialchars($age) ?></td>
       </tr>
       <tr>
         <td>好きな食べ物（任意）</td>
         <td>food</td>
-        <td><?= htmlspecialchars($food) ?></td>
+        <td><?php echo htmlspecialchars($food) ?></td>
       </tr>
       <tr>
         <td>お問い合わせ内容</td>
         <td>content</td>
-        <td><?= nl2br(htmlspecialchars($content)) ?></td>
+        <td><?php echo nl2br(htmlspecialchars($content)) ?></td>
       </tr>
       <tr>
         <td>サイズ選択（ラジオボタン）</td>
         <td>size</td>
-        <td><?= htmlspecialchars($size) ?></td>
+        <td><?php echo htmlspecialchars($size) ?></td>
       </tr>
       <tr>
         <td>色選択（チェックボックス）</td>
         <td>color[]</td>
-        <td><?= htmlspecialchars(implode('、', $color)) ?></td>
+        <td><?php echo htmlspecialchars(implode('、', $color)) ?></td>
       </tr>
       <tr>
         <td>プルダウン</td>
         <td>list[]</td>
-        <td><?= htmlspecialchars(implode('、', $list)) ?></td>
+        <td><?php echo htmlspecialchars(implode('、', $list)) ?></td>
       </tr>
       <tr>
         <td>シングルファイル選択</td>
         <td>docfile</td>
-        <td><?= htmlspecialchars($docfile['name']) ?></td>
+        <td><?php echo htmlspecialchars($docfile['name']) ?></td>
       </tr>
       <tr>
         <td>マルチファイル選択</td>
         <td>picfiles</td>
         <td>
           <?php foreach($picfiles as $picfile) { ?>
-            <div><?= htmlspecialchars($picfile['name']) ?></div>
+            <div><?php echo htmlspecialchars($picfile['name']) ?></div>
           <?php } ?>
         </td>
       </tr>
@@ -115,16 +115,16 @@ extract ($_POST);
     </tbody>
   </table>
 
-  <input type="hidden" name="name" value="<?= htmlspecialchars($name) ?>">
-  <input type="hidden" name="kana" value="<?= htmlspecialchars($kana) ?>">
-  <input type="hidden" name="age" value="<?= htmlspecialchars($age) ?>">
-  <input type="hidden" name="content" value="<?= htmlspecialchars($content) ?>">
-  <input type="hidden" name="size" value="<?= htmlspecialchars($size) ?>">
+  <input type="hidden" name="name" value="<?php echo htmlspecialchars($name) ?>">
+  <input type="hidden" name="kana" value="<?php echo htmlspecialchars($kana) ?>">
+  <input type="hidden" name="age" value="<?php echo htmlspecialchars($age) ?>">
+  <input type="hidden" name="content" value="<?php echo htmlspecialchars($content) ?>">
+  <input type="hidden" name="size" value="<?php echo htmlspecialchars($size) ?>">
   <?php foreach(@$color as $item) { ?>
-  <input type="hidden" name="color[]" value="<?= htmlspecialchars($item) ?>">
+  <input type="hidden" name="color[]" value="<?php echo htmlspecialchars($item) ?>">
   <?php } ?>
   <?php foreach(@$list as $item) { ?>
-  <input type="hidden" name="list[]" value="<?= htmlspecialchars($item) ?>">
+  <input type="hidden" name="list[]" value="<?php echo htmlspecialchars($item) ?>">
   <?php } ?>
 
   <br>

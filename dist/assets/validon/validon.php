@@ -4,7 +4,7 @@
  * JSON受信したならJavaScriptからのAjax通信
  */
 if('application/json' === @$_SERVER['CONTENT_TYPE']) {
-    $json = json_decode(file_get_contents("php://input"), true) ?: [];
+    $json = json_decode(file_get_contents("php://input"), true) ?: array();
 
     // 指定のバリデート設定をロード
     $configfile = __DIR__.'/configs/'.$json['config'].'.php';
@@ -57,7 +57,7 @@ function validon(&$params, $fulldata=null)
     if(count($_FILES)) {
         foreach($_FILES as $input_name=>$file) {
             if(is_array($file['name'])) {
-                $files = [];
+                $files = array();
                 foreach(array_keys($file) as $fkey) {
                     foreach(array_keys($file[$fkey]) as $numkey) {
                         $files[$numkey][$fkey] = $file[$fkey][$numkey];
@@ -74,7 +74,7 @@ function validon(&$params, $fulldata=null)
     $original_params = $params;
 
     // fulldataが未指定なら第一引数のデータをセットする
-    if(!$fulldata) $fulldata = ['params' => $params];
+    if(!$fulldata) $fulldata = array('params' => $params);
 
     // 各種処理
     foreach($keys as $key) {

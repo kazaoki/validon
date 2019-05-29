@@ -2,6 +2,8 @@
 
 global $_VALIDON;
 global $_VALIDON_ENV;
+mb_language('Japanese');
+mb_internal_encoding('utf-8');
 
 /**
  * Validon設定
@@ -114,7 +116,7 @@ $_VALIDON['docfile'] = function(&$value, &$data=null)
 $_VALIDON['picfiles'] = function(&$values, &$data=null)
 {
     // 条件
-    $errors = [];
+    $errors = array();
     $size_total = 0;
     if(is_array($values)) {
         foreach($values as $value) {
