@@ -153,7 +153,7 @@ function __IS_TIME($string)
  */
 function __IS_URL($string)
 {
-    return preg_match('/^https?\:\/\//', $string);
+    return preg_match('/^https?\:\/\/.+/', $string);
 }
 
 /**
