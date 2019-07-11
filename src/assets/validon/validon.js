@@ -63,8 +63,10 @@ function Validon(opt)
 
 		// 要素ごとのイベント発火が有効の場合、各要素に `onChange` が登録され都度バリデートされるようになる。
 		// ※要素ごとに設定も可能（例： data-validon-on='change,keydown' ← カンマで複数指定可
-		if(validon.eachfire) {
-			var elems = validon.form.querySelectorAll('[name]')
+		if(validon.eachfire || validon.form.querySelectorAll('[data-validon-on]').length) {
+			var elems = validon.eachfire
+				? validon.form.querySelectorAll('[name]')
+				: validon.form.querySelectorAll('[data-validon-on]')
 			for(var i=0; i<elems.length; i++) {
 				var eventName = elems[i].getAttribute('data-validon-on')
 				if(!eventName) {
