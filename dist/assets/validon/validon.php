@@ -189,7 +189,7 @@ function __TRIM($data)
         foreach($data as $value) {
             $value = __TRIM($value);
         }
-    } else {
+    } else if(is_string($data)) {
         $data = preg_replace('/\A[ \t\n\r\0\x0B\p{Z}]++|[ \t\n\r\0\x0B\p{Z}]++\z/u', '', $data);
         if(preg_match('/[\r\n]/s', $data)) $data .= "\n";
     }
