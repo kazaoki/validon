@@ -409,7 +409,7 @@ function objectMerge(a, b) {
 						Object.prototype.toString.call(a[key]) === '[object Object]' &&
 						Object.prototype.toString.call(b[key]) === '[object Object]'
 					)
-						? merge(a[key], b[key])
+						? objectMerge(a[key], b[key])
 						: (
 							(
 								Object.prototype.toString.call(a[key]) === '[object Array]' &&
