@@ -134,13 +134,12 @@ Validon.prototype = {
 			// 各要素にとりあえず空をセットする（未選択要素でもajaxで飛ばしたいので）
 			var matches;
 			if(matches = name.match(/^(.+?)\[(.*)\]$/)) {
-				var key = matches[1]+'[]'
 				if(matches[2].length){
 					// name="color[abc]"
-					if('object'!==typeof params[key]) params[key] = new Object()
+					if('object'!==typeof params[matches[1]]) params[matches[1]] = new Object()
 				} else {
 					// name="color[]"
-					if('object'!==typeof params[key]) params[key] = new Array()
+					if('object'!==typeof params[matches[1]]) params[matches[1]] = new Array()
 				}
 			} else {
 				// name="color"
@@ -355,13 +354,13 @@ Validon.prototype = {
 
 		// セットするキー名生成
 		var setkey = name.replace(/\[.*$/, '')
-		if(name.match(/\[/)) setkey += '[]'
 
 		// 既存のオブジェクトとマージ
-		params[setkey] = objectMerge(
-			$f(name, value),
-			params[setkey]
+		var merged = objectMerge(
+			{data: $f(name, value)},
+			{data: params[setkey]}
 		)
+		params[setkey] = merged['data']
 	}
 }
 
