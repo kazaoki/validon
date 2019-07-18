@@ -128,79 +128,57 @@ Validon.prototype = {
 		var elements = validon.form.querySelectorAll('[name]')
 		var hasFileApi = !!window.File;
 		for(var i=0; i<elements.length; i++) {
+
 			var name = elements[i].getAttribute('name')
-			if('undefined'!==typeof params[name]) continue
-			// ラジオボタン
-			if(elements[i].type==='radio') {
-				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
-				params[name] = null
-				for(var j=0; j<lump.length; j++) {
-					if(lump[j].checked) {
-						params[name] = lump[j].value
-						break
-					}
+
+			// 各要素にとりあえず空をセットする（未選択要素でもajaxで飛ばしたいので）
+			var matches;
+			if(matches = name.match(/^(.+?)\[(.*)\]$/)) {
+				var key = matches[1]+'[]'
+				if(matches[2].length){
+					// name="color[abc]"
+					if('object'!==typeof params[key]) params[key] = new Object()
+				} else {
+					// name="color[]"
+					if('object'!==typeof params[key]) params[key] = new Array()
 				}
+			} else {
+				// name="color"
+				params[name] = ''
 			}
-			// チェックボックス
-			else if(elements[i].type==='checkbox') {
-				var lump = validon.form.querySelectorAll('[name="'+name+'"]')
-				params[name] = new Array();
-				for(var j=0; j<lump.length; j++) {
-					if(lump[j].checked) {
-						params[name].push(lump[j].value)
-					}
-				}
+
+			// ラジオボタン or チェックボックス
+			if(
+				'radio'   ===elements[i].type ||
+				'checkbox'===elements[i].type
+			) {
+				if(elements[i].checked) this.paramSet(params, name, elements[i].value)
 			}
 			// セレクトプルダウン
-			else if(elements[i].tagName==='SELECT') {
+			else if('SELECT'===elements[i].tagName) {
 				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
-				if(name.match(/\]$/)) {
-					// マルチ
-					params[name] = new Array();
-					for(var j=0; j<lump.length; j++) {
-						if(lump[j].selected) {
-							params[name].push(lump[j].value)
-						}
-					}
-				} else {
-					// シングル
-					params[name] = null
-					for(var j=0; j<lump.length; j++) {
-						if(lump[j].selected) {
-							params[name] = lump[j].value
-							break
-						}
-					}
+				for(var j=0; j<lump.length; j++) {
+					if(lump[j].selected) this.paramSet(params, name, lump[j].value)
 				}
 			}
 			// ファイル選択（FileAPIが使用できる場合は name,type,size をセットする）
 			else if(elements[i].type==='file' && hasFileApi) {
-				var element = validon.form.querySelector('[name="'+name+'"]')
-				var files = new Array();
-				for(var j=0; j<element.files.length; j++){
-					files.push({
-						name: element.files[j]['name'],
-						type: element.files[j]['type'],
-						size: element.files[j]['size'],
-					})
-				}
-				if(name.match(/\]$/)) {
-					params[name] = files
-				} else {
-					params[name] = files[0]
+				if(elements[i].files.length) {
+					var files = new Array();
+					for(var j=0; j<elements[i].files.length; j++){
+						files.push({
+							name: elements[i].files[j]['name'],
+							type: elements[i].files[j]['type'],
+							size: elements[i].files[j]['size'],
+						})
+					}
+					if(1===files.length) files=files[0] // 1つなら上へ上げる
+					this.paramSet(params, name, files)
 				}
 			}
 			// その他の要素
 			else {
-				if(name.match(/\]$/)) {
-					var lump = validon.form.querySelectorAll('[name="'+name+'"]')
-					params[name] = new Array();
-					for(var j=0; j<lump.length; j++) {
-						params[name].push(lump[j].value)
-					}
-				} else {
-					params[name] = elements[i].value
-				}
+				this.paramSet(params, name, elements[i].value)
 			}
 		}
 		json.params = params
@@ -338,6 +316,30 @@ Validon.prototype = {
 		xhr.send(JSON.stringify(json))
 
 		return this
+	},
+
+	/**
+	 * params変数をセットするメソッド。キー名に[.*]がある場合は1次元まで配列にする。
+	 *
+	 * ex. color=red           -> params['color']   = 'red'
+	 * ex. color[]=red         -> params['color[]'] = ['red']
+	 * ex. color[123]=red      -> params['color[]'] = [{'123': 'red'}]
+	 * ex. color[123][456]=red -> params['color[]'] = [{'123[456]': 'red'}]
+	 */
+	paramSet: function(params, name, value) {
+		var matches;
+		if(matches = name.match(/^(.+?)\[(.*)\]$/)) {
+			var key = matches[1]+'[]'
+			if(matches[2].length){
+				if('object'!==typeof params[key]) params[key] = new Object()
+				params[key][matches[2]] = value
+			} else {
+				if('object'!==typeof params[key]) params[key] = new Array()
+				params[key].push(value)
+			}
+		} else {
+			params[name] = value
+		}
 	}
 }
 

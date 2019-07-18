@@ -72,11 +72,31 @@ test3</textarea><br>
   <section>
     <h2>ファイル選択</h2>
     <section>
-      シングルファイル：<input type="file" name="docfile">
+      ドキュメントファイル（シングル）：<input type="file" name="docfile">
     </section>
     <section>
-      マルチファイル：<input type="file" name="picfiles[]" accept="image/*" multiple>
+      マルチファイル：<input type="file" name="picfiles" accept="image/*" multiple>
     </section>
+    <section>
+      配列選択A（シングル）：<input type="file" name="up[A]"><br>
+      配列選択B（シングル）：<input type="file" name="up[B]">
+    </section>
+  </section>
+
+  <section>
+    <h2>キー有り配列（1～5）</h2>
+    <input type="text" name="nums[1]" value="111"> ※nums[<strong style="color:#f00">1</strong>]<br>
+    <input type="text" name="nums[2]" value="222"> ※nums[<strong style="color:#f00">2</strong>]<br>
+    <input type="text" name="nums[3]" value="333"> ※nums[<strong style="color:#f00">3</strong>]<br>
+    <input type="text" name="nums[4]" value="444"> ※nums[<strong style="color:#f00">4</strong>]<br>
+    <input type="text" name="nums[5]" value="555"> ※nums[<strong style="color:#f00">5</strong>]
+    <h2>キー有り配列（A～E）</h2>
+    <input type="text" name="alphas[A]" value="AAA"> ※alphas[<strong style="color:#f00">A</strong>]<br>
+    <input type="text" name="alphas[B]" value="BBB"> ※alphas[<strong style="color:#f00">B</strong>]<br>
+    <input type="text" name="alphas[C]" value="CCC"> ※alphas[<strong style="color:#f00">C</strong>]<br>
+    <input type="text" name="alphas[D]" value="DDD"> ※alphas[<strong style="color:#f00">D</strong>]<br>
+    <input type="text" name="alphas[E]" value="EEE"> ※alphas[<strong style="color:#f00">E</strong>]<br>
+    <input type="text" name="alphas[F][hoge]" value="FFF(hoge)"> ※alphas[<strong style="color:#f00">F][hoge</strong>] 2次元配列はこうなっちゃうので注意。
   </section>
 
   <section>

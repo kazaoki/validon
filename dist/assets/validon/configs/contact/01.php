@@ -127,3 +127,19 @@ $_VALIDON['picfiles'] = function(&$values, &$data=null)
         if($size_total > 1024*1024) return 'ファイルサイズ合計が 1MB を超えています。';
     }
 };
+
+/**
+ * キー有り配列（1-5）
+ */
+$_VALIDON['nums'] = function(&$values, &$data=null)
+{
+    error_log(print_r($values, 1));
+};
+
+/**
+ * キー有り配列（A-E）
+ */
+$_VALIDON['alphas'] = function(&$value, &$data=null)
+{
+    error_log(print_r($value, 1));
+};
