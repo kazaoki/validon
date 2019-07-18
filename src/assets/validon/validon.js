@@ -326,20 +326,42 @@ Validon.prototype = {
 	 * ex. color[123]=red      -> params['color[]'] = [{'123': 'red'}]
 	 * ex. color[123][456]=red -> params['color[]'] = [{'123[456]': 'red'}]
 	 */
-	paramSet: function(params, name, value) {
-		var matches;
-		if(matches = name.match(/^(.+?)\[(.*)\]$/)) {
-			var key = matches[1]+'[]'
-			if(matches[2].length){
-				if('object'!==typeof params[key]) params[key] = new Object()
-				params[key][matches[2]] = value
+	paramSet: function(params, name, value)
+	{
+		// 配列・オブジェクトに展開する再帰関数
+		var $f = function(key, value)
+		{
+			var matches;
+			if(matches = key.match(/^.*?\[(.*?)\](.*)$/)) {
+				if(matches[1].length) {
+					var retvar = new Object()
+					retvar[matches[1]] = matches[2]
+						? $f(matches[2], value)
+						: value
+					;
+					return retvar
+				} else {
+					var retvar = new Array()
+					retvar.push(matches[2]
+						? $f(matches[2], value)
+						: value
+					)
+					return retvar
+				}
 			} else {
-				if('object'!==typeof params[key]) params[key] = new Array()
-				params[key].push(value)
+				return value
 			}
-		} else {
-			params[name] = value
 		}
+
+		// セットするキー名生成
+		var setkey = name.replace(/\[.*$/, '')
+		if(name.match(/\[/)) setkey += '[]'
+
+		// 既存のオブジェクトとマージ
+		params[setkey] = objectMerge(
+			$f(name, value),
+			params[setkey]
+		)
 	}
 }
 
@@ -363,16 +385,42 @@ if (!Array.prototype.indexOf) Array.prototype.indexOf = (function (Object, max, 
 	"use strict";
 	return function indexOf(member, fromIndex) {
 		if (this === null || this === undefined) throw TypeError("Array.prototype.indexOf called on null or undefined");
-
 		var that = Object(this), Len = that.length >>> 0, i = min(fromIndex | 0, Len);
 		if (i < 0) i = max(0, Len + i); else if (i >= Len) return -1;
-
 		if (member === void 0) {
 			for (; i !== Len; ++i) if (that[i] === void 0 && i in that) return i; // undefined
 		} else if (member !== member) {
 			for (; i !== Len; ++i) if (that[i] !== that[i]) return i; // NaN
 		} else for (; i !== Len; ++i) if (that[i] === member) return i; // all else
-
 		return -1; // if the value was not found, then return -1
 	};
 })(Object, Math.max, Math.min);
+
+/**
+ * オブジェクトマージ関数
+ * ※配列はconcat()される
+ */
+function objectMerge(a, b) {
+	for (var key in b) {
+		if (b.hasOwnProperty(key)) {
+			a[key] = (key in a)
+				? (
+					(
+						Object.prototype.toString.call(a[key]) === '[object Object]' &&
+						Object.prototype.toString.call(b[key]) === '[object Object]'
+					)
+						? merge(a[key], b[key])
+						: (
+							(
+								Object.prototype.toString.call(a[key]) === '[object Array]' &&
+								Object.prototype.toString.call(b[key]) === '[object Array]'
+							)
+								? b[key].concat(a[key])
+								: b[key]
+						)
+					)
+				: b[key];
+		}
+	}
+	return a;
+};
