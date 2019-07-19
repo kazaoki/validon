@@ -240,6 +240,7 @@ Validon.prototype = {
 						for(var i=0; i<json.changes.length; i++) {
 							var name = json.changes[i]
 							var elem = validon.form.querySelector('[name="'+name+'"]')
+							if(!elem) continue
 							if(
 								'INPUT' === elem.tagName &&
 								('radio' === elem.getAttribute('type') || 'checkbox' === elem.getAttribute('type'))
@@ -335,7 +336,7 @@ Validon.prototype = {
 					}
 
 					// エラーが一つも無ければsubmitする（isSubmit時のみ）
-					if(!json.errors && json.isSubmit) validon.form.submit()
+					if(!json.errors.length && json.isSubmit) validon.form.submit()
 					else {
 						// エラーがある場合はsubmit中のクリック不可を戻す
 						if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
