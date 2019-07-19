@@ -13,14 +13,14 @@ $_VALIDON_ENV['NOTICE'] = false;
 // 自動トリム機能
 $_VALIDON_ENV['TRIM'] = true;
 // 値ごとの共通事前バリデート
-// $_VALIDON_ENV['BEFORE'] = function($key, &$value, &$data=null){ error_log('<<< BEFORE >>>'); };
+// $_VALIDON_ENV['BEFORE'] = function($key, &$value, &$params, &$errors, &$changes){ error_log('<<< BEFORE >>>'); };
 // 値ごとの共通事後バリデート
-// $_VALIDON_ENV['AFTER'] = function($key, &$value, &$data=null){ error_log('<<< AFTER >>>'); };
+// $_VALIDON_ENV['AFTER'] = function($key, &$value, &$params, &$errors, &$changes){ error_log('<<< AFTER >>>'); };
 
 /**
  * お名前
  */
-$_VALIDON['name'] = function(&$value, &$data=null)
+$_VALIDON['name'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
     if(!strlen($value)) return '必須項目です。';
@@ -30,7 +30,7 @@ $_VALIDON['name'] = function(&$value, &$data=null)
 /**
  * カナ
  */
-$_VALIDON['kana'] = function(&$value, &$data=null)
+$_VALIDON['kana'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 全角ひらがなを全角カタカナに変換
     $value = mb_convert_kana($value, 'C');
@@ -43,7 +43,7 @@ $_VALIDON['kana'] = function(&$value, &$data=null)
 /**
  * 年齢
  */
-$_VALIDON['age'] = function(&$value, &$data=null)
+$_VALIDON['age'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 全角英数字を半角に変換
     $value = mb_convert_kana($value, 'as');
@@ -57,7 +57,7 @@ $_VALIDON['age'] = function(&$value, &$data=null)
 /**
  * 好きな食べ物（任意）
  */
-$_VALIDON['food'] = function(&$value, &$data=null)
+$_VALIDON['food'] = function(&$value, &$params, &$errors, &$changes)
 {
     return;
 };
@@ -65,7 +65,7 @@ $_VALIDON['food'] = function(&$value, &$data=null)
 /**
  * お問い合わせ内容
  */
-$_VALIDON['content'] = function(&$value, &$data=null)
+$_VALIDON['content'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
     if(!strlen($value)) return '必須項目です。';
@@ -75,7 +75,7 @@ $_VALIDON['content'] = function(&$value, &$data=null)
 /**
  * サイズ選択（ラジオボタン）
  */
-$_VALIDON['size'] = function(&$value, &$data=null)
+$_VALIDON['size'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
     if(!strlen($value)) return '必須項目です。';
@@ -84,7 +84,7 @@ $_VALIDON['size'] = function(&$value, &$data=null)
 /**
  * 色選択（チェックボックス）
  */
-$_VALIDON['color'] = function(&$values, &$data=null)
+$_VALIDON['color'] = function(&$values, &$params, &$errors, &$changes)
 {
     // 条件
     if(!count($values)) return '必須項目です。';
@@ -93,7 +93,7 @@ $_VALIDON['color'] = function(&$values, &$data=null)
 /**
  * プルダウン
  */
-$_VALIDON['list'] = function(&$values, &$data=null)
+$_VALIDON['list'] = function(&$values, &$params, &$errors, &$changes)
 {
     // 条件
     if(!count($values)) return '必須項目です。';
@@ -102,7 +102,7 @@ $_VALIDON['list'] = function(&$values, &$data=null)
 /**
  * シングルファイル
  */
-$_VALIDON['docfile'] = function(&$value, &$data=null)
+$_VALIDON['docfile'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
     if(is_array($value)) {
@@ -113,10 +113,9 @@ $_VALIDON['docfile'] = function(&$value, &$data=null)
 /**
  * マルチファイル
  */
-$_VALIDON['picfiles'] = function(&$values, &$data=null)
+$_VALIDON['picfiles'] = function(&$values, &$params, &$errors, &$changes)
 {
     // 条件
-    $errors = array();
     $size_total = 0;
     if(is_array($values)) {
         foreach($values as $value) {
@@ -131,15 +130,19 @@ $_VALIDON['picfiles'] = function(&$values, &$data=null)
 /**
  * キー有り配列（1-5）
  */
-$_VALIDON['nums'] = function(&$values, &$data=null)
+$_VALIDON['nums'] = function(&$values, &$params, &$errors, &$changes)
 {
     error_log(print_r($values, 1));
+    $errors['nums[3]'] = 'さんばんめ';
+    $params['nums[3]'] = '書き換えないよう';
+    $params['nums[etc][]'] = 'XXX';
 };
 
 /**
  * キー有り配列（A-E）
  */
-$_VALIDON['alphas'] = function(&$value, &$data=null)
+$_VALIDON['alphas'] = function(&$value, &$params, &$errors, &$changes)
 {
     error_log(print_r($value, 1));
+    return 'ALPHAS!!';
 };

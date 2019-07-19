@@ -143,7 +143,7 @@ Validon.prototype = {
 				}
 			} else {
 				// name="color"
-				params[name] = ''
+				if('undefined'===typeof params[name]) params[name] = ''
 			}
 
 			// ラジオボタン or チェックボックス
@@ -151,7 +151,9 @@ Validon.prototype = {
 				'radio'   ===elements[i].type ||
 				'checkbox'===elements[i].type
 			) {
-				if(elements[i].checked) this.paramSet(params, name, elements[i].value)
+				if(elements[i].checked) {
+					this.paramSet(params, name, elements[i].value)
+				}
 			}
 			// セレクトプルダウン
 			else if('SELECT'===elements[i].tagName) {
@@ -230,7 +232,7 @@ Validon.prototype = {
 
 					// ターゲットのみ値の変更があれば反映する
 					if(json.changes && json.changes.length) {
-							for(var i=0; i<json.changes.length; i++) {
+						for(var i=0; i<json.changes.length; i++) {
 							var name = json.changes[i]
 							var elem = validon.form.querySelector('[name="'+name+'"]')
 							if(
@@ -254,11 +256,38 @@ Validon.prototype = {
 
 					// ターゲットのみエラーがあれば反映する
 					if(json.targets && json.targets.length) {
-						for(var i=0; i<json.targets.length; i++) {
-							var name = json.targets[i]
-							var elem = validon.form.querySelector('[name="'+name+'"]')
+						// エラーにxxx[]が入ってくるようであれば、キーがxxxだけでも表示対象にするように。
+						var list = json.targets;
+						for(var i in list) {
+							for(var key in json.errors) {
+								if(key.match(new RegExp('^'+list[i]+'\\\['))) list.push(key)
+							}
+						}
+
+						// 開始
+						for(var i=0; i<list.length; i++) {
+							// var name = list[i]
+							var name = list[i]
 							var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+							if(!errorholder){
+								name = list[i].replace(/\[.*?\]/, '')
+								errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+							}
+							// エラーホルダーが指定されてなければ自動で用意
 							if(!errorholder.length) {
+
+								// 対象要素探す
+								var elem = validon.form.querySelector('[name="'+name+'"]')
+								if(!elem) {
+									// なければ[]付きのを要素を探す
+									elem = validon.form.querySelector('[name^="'+name+'["]')
+									if(!elem) {
+										console.warn('Missing element: "'+name+'"');
+										continue;
+									}
+								}
+
+								// 対象要素の位置からエラーホルダーを生成する
 								var parent = elem.parentNode
 								while (parent.tagName !== validon.errorgroup.toUpperCase()) {
 									parent = parent.parentNode;
@@ -415,7 +444,7 @@ function objectMerge(a, b) {
 								Object.prototype.toString.call(b[key]) === '[object Array]'
 							)
 								? b[key].concat(a[key])
-								: b[key]
+								: a[key]
 						)
 					)
 				: b[key];

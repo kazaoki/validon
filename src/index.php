@@ -47,11 +47,12 @@ test3</textarea><br>
     <label><input type="radio" name="size" value="大"> 大</label><br>
     <label><input type="radio" name="size" value="中"> 中</label><br>
     <label><input type="radio" name="size" value="小"> 小</label><br>
+    <label><input type="radio" name="size" value="極小"> 極小</label><br>
   </section>
 
   <section>
     <h2>色選択（チェックボックス）</h2>
-    <div>※エラー位置固定→<div data-validon-errorholder="color[]"></div></div>
+    <div>※エラー位置固定→<div data-validon-errorholder="color"></div></div>
     <label><input type="checkbox" name="color[]" value="赤"> 赤</label><br>
     <label><input type="checkbox" name="color[]" value="青" checked> 青</label><br>
     <label><input type="checkbox" name="color[]" value="黄"> 黄</label><br>
@@ -88,10 +89,11 @@ test3</textarea><br>
     <input type="text" name="nums[1]" value="111"> ※nums[<strong style="color:#f00">1</strong>]<br>
     <input type="text" name="nums[2]" value="222"> ※nums[<strong style="color:#f00">2</strong>]<br>
     <input type="text" name="nums[3]" value="333"> ※nums[<strong style="color:#f00">3</strong>]<br>
+    <div data-validon-errorholder="nums[3]"></div>
     <input type="text" name="nums[4]" value="444"> ※nums[<strong style="color:#f00">4</strong>]<br>
     <input type="text" name="nums[5]" value="555"> ※nums[<strong style="color:#f00">5</strong>]<br>
     <input type="text" name="nums[etc][]" value="いっこめ"> ※nums[<strong style="color:#f00">etc</strong>][]<br>
-    <input type="text" name="nums[etc][]" value="にこめ"> ※nums[<strong style="color:#f00">etc</strong>][]
+    <input type="text" name="nums[etc][]" value="にこめ"> ※nums[<strong style="color:#f00">etc</strong>][] ※「[]」この形だと値の書き換えが正しくできないので、なるべく配列キーまで指定すること。
     <h2>キー有り配列（A～E）</h2>
     <input type="text" name="alphas[A]" value="AAA"> ※alphas[<strong style="color:#f00">A</strong>]<br>
     <input type="text" name="alphas[B]" value="BBB"> ※alphas[<strong style="color:#f00">B</strong>]<br>

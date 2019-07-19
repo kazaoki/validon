@@ -76,6 +76,10 @@ function validon(&$params, $fulldata=null)
     // fulldataが未指定なら第一引数のデータをセットする
     if(!$fulldata) $fulldata = array('params' => $params);
 
+    // 変数の用意
+    $errors  = array();
+    $changes = array();
+
     // 各種処理
     foreach($keys as $key) {
         // キーに「[]」がついてたら削除して設定キーとす
@@ -88,12 +92,12 @@ function validon(&$params, $fulldata=null)
 
         // 全ての値をバリデートする前にフック実行
         if(is_callable(@$_VALIDON_ENV['BEFORE'])) {
-            $_VALIDON_ENV['BEFORE']($key, $params[$key], $fulldata);
+            $_VALIDON_ENV['BEFORE']($key, $params[$key], $params, $errors, $changes);
         }
 
         // バリデート関数が設定ファイルで定義されていればバリデート実行
         if(is_callable(@$_VALIDON[$validonkey])) {
-            $error = $_VALIDON[$validonkey]($params[$key], $fulldata);
+            $error = $_VALIDON[$validonkey]($params[$key], $params, $errors, $changes);
             if(strlen($error)) $errors[$key] = $error;
         } else {
             if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $validonkey));
@@ -101,7 +105,7 @@ function validon(&$params, $fulldata=null)
 
         // 全ての値をバリデートした後にフック実行
         if(is_callable(@$_VALIDON_ENV['AFTER'])) {
-            $_VALIDON_ENV['AFTER']($key, $params[$key], $fulldata);
+            $_VALIDON_ENV['AFTER']($key, $params[$key], $params, $errors, $changes);
         }
     }
 
@@ -113,9 +117,9 @@ function validon(&$params, $fulldata=null)
     }
 
     // 返却
-    @$fulldata['params'] = $params;
-    @$fulldata['errors'] = @$errors;
-    @$fulldata['changes'] = @$changes;
+    $fulldata['params'] = $params;
+    $fulldata['errors'] = $errors;
+    $fulldata['changes'] = $changes;
 
     return $fulldata;
 }
