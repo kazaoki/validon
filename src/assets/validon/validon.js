@@ -94,6 +94,11 @@ function Validon(opt)
 		}
 	};
 	window.onload = function () { windowOnload(); };
+
+	// エラーが起きたら対象フォームのクリック解除
+	window.onerror = function(msg, url, line, col, error) {
+		validon.form.style.pointerEvents = ''
+	}
 }
 
 /**
