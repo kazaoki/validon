@@ -301,10 +301,10 @@ Validon.prototype = {
 								if(!elem) {
 									// なければ[]付きのを要素を探す
 									elem = validon.form.querySelector('[name^="'+name+'["]')
-									// if(!elem) {
-									// 	console.warn('Missing element: "'+name+'"');
-									// 	continue;
-									// }
+									if(!elem) {
+										// console.warn('Missing element: "'+name+'"');
+										continue;
+									}
 								}
 
 								// 対象要素の位置からエラーホルダーを生成する
