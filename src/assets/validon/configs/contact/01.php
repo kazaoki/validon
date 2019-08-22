@@ -96,7 +96,7 @@ $_VALIDON['color'] = function(&$values, &$params, &$errors, &$changes)
 $_VALIDON['list'] = function(&$values, &$params, &$errors, &$changes)
 {
     // 条件
-    if(!count($values)) return '必須項目です。';
+    if(!strlen(implode('', array_values($values)))) return '必須項目です。';
 };
 
 /**

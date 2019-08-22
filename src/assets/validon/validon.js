@@ -93,17 +93,17 @@ function Validon(opt)
 				}
 			}
 		}
+
+		// フック：loadedFunc
+		if(validon.loadedFunc && 'function' === typeof validon.loadedFunc) {
+			if(false === validon.loadedFunc()) return false
+		}
 	};
 	window.onload = function () { windowOnload(); };
 
 	// エラーが起きたら対象フォームのクリック解除
 	window.onerror = function(msg, url, line, col, error) {
 		validon.form.style.pointerEvents = ''
-	}
-
-	// フック：loadedFunc
-	if(validon.loadedFunc && 'function' === typeof validon.loadedFunc) {
-		if(false === validon.loadedFunc()) return false
 	}
 }
 
@@ -278,13 +278,21 @@ Validon.prototype = {
 
 						// 開始
 						for(var i=0; i<list.length; i++) {
-							// var name = list[i]
 							var name = list[i]
+							var raw_name = name.replace(/\[.*?\]/, '')
 							var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
-							if(!errorholder){
-								name = list[i].replace(/\[.*?\]/, '')
+							if(!errorholder.length){
+								// [] はずしたもので探す
+								name = raw_name
 								errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+
+								// 無ければ [] つけたもので探す
+								if(!errorholder.length){
+									name = raw_name+'[]'
+									errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
+								}
 							}
+
 							// エラーホルダーが指定されてなければ自動で用意
 							if(!errorholder.length) {
 
@@ -318,12 +326,13 @@ Validon.prototype = {
 								errorholder = new Array(errorholder)
 							}
 							var message = ''
-							if(json.errors && 'undefined' !== typeof json.errors[name]) {
-								message = validon.errortag.replace(/\$message/, json.errors[name])
+							if(json.errors && 'undefined' !== typeof json.errors[raw_name]) {
+								message = validon.errortag.replace(/\$message/, json.errors[raw_name])
 							}
 							for(var j=0; j<errorholder.length; j++) {
 								errorholder[j].innerHTML = message
 							}
+
 						}
 					}
 
@@ -342,7 +351,7 @@ Validon.prototype = {
 					}
 
 					// エラーが一つも無ければsubmitする（isSubmit時のみ）
-					if(!json.errors.length && json.isSubmit) validon.form.submit()
+					if(!Object.keys(json.errors).length && json.isSubmit) validon.form.submit()
 					else {
 						// エラーがある場合はsubmit中のクリック不可を戻す
 						if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
