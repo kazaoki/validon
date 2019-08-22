@@ -124,6 +124,9 @@ var validon = new Validon({
   errorgroup: 'section',
   // errorposition: 'prepend',
   errortag: '<div class="error">$message</div>',
+  loadedFunc: function(){
+    console.log('LOADED')
+  },
   startFunc: function(){
     console.log('START')
   },
