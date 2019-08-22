@@ -43,7 +43,7 @@ function validon(&$params, $fulldata=null)
     // 回すべきキー
     $keys = array_keys('application/json' === @$_SERVER['CONTENT_TYPE']
         ? $params // Ajaxなら入ってきた値のみチェック
-        : $_VALIDON // それ以外（PHPからのチェック等）の場合は設定してる全値をチェック
+        : ($_VALIDON?:array()) // それ以外（PHPからのチェック等）の場合は設定してる全値をチェック
     );
 
     // アップロードファイルが一時アップされている場合はその情報をセット
