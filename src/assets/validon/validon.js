@@ -298,6 +298,9 @@ Validon.prototype = {
 							// エラーホルダーが指定されてなければ自動で用意
 							if(!errorholder.length) {
 
+								// 名前戻し
+								name = raw_name
+
 								// 対象要素探す
 								var elem = validon.form.querySelector('[name="'+name+'"]')
 								if(!elem) {
