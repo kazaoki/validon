@@ -52,7 +52,7 @@ const connectPhp   = require('gulp-connect-php-mb-path');
  * JS(ES) compile
  */
 gulp.task('js', ()=>{
-	gulp.src(['src/assets/validon/**/*.js'])
+	return gulp.src(['src/assets/validon/**/*.js'])
 		.pipe(plumber({
 			handleError: function (err) {
 				console.log(err);
@@ -106,7 +106,7 @@ gulp.task('js', ()=>{
  * html/php files copy
  */
 gulp.task('htmlphp', ()=>{
-	gulp.src(['src/**/*.html', 'src/**/*.php', 'src/**/*.css'])
+	return gulp.src(['src/**/*.html', 'src/**/*.php', 'src/**/*.css'])
 		.pipe(gulp.dest('dist'))
 		.pipe(browserSync.stream())
 });
@@ -115,7 +115,7 @@ gulp.task('htmlphp', ()=>{
  * other files copy
  */
 gulp.task('other', ()=>{
-	gulp.src(['src/assets/validon/VERSION'])
+	return gulp.src(['src/assets/validon/VERSION'])
 		.pipe(gulp.dest('dist/assets/validon'))
 });
 
@@ -133,14 +133,14 @@ gulp.task('other', ()=>{
  * watch files change
  */
 gulp.task('watch', ()=>{
-	gulp.watch('src/**/*.js',['js']);
+	gulp.watch('src/**/*.js',gulp.task('js'));
 
-	// gulp.watch('html/scss/**/*.scss',['sass']);
-	// gulp.watch('src/images/**/*',['image']);
-	gulp.watch('src/**/*.html',['htmlphp']);
-	gulp.watch('src/**/*.php',['htmlphp']);
-	gulp.watch('src/**/*.css',['htmlphp']);
-	gulp.watch('src/assets/validon/VERSION',['other']);
+	// gulp.watch('html/scss/**/*.scss',gulp.task('sass'));
+	// gulp.watch('src/images/**/*',gulp.task('image'));
+	gulp.watch('src/**/*.html',gulp.task('htmlphp'));
+	gulp.watch('src/**/*.php',gulp.task('htmlphp'));
+	gulp.watch('src/**/*.css',gulp.task('htmlphp'));
+	gulp.watch('src/assets/validon/VERSION',gulp.task('other'));
 
 	// gulp.watch(['html/**/*.html', 'html/**/*.php', 'html/**/*.js'],()=>{
 	// 	gulp.src(['html/**/*.html', 'html/**/*.php', 'html/**/*.js'])
@@ -171,11 +171,28 @@ gulp.task('server', ()=>{
 /**
  * build & watch
  */
-// gulp.task('dev', ['js', 'sass', 'image', 'htmlphp', 'assets', 'connect-php', 'server', 'watch']);
-gulp.task('dev', ['js', 'htmlphp', 'other', 'server', 'watch']);
+gulp.task('default',
+	gulp.series(
+		gulp.parallel(
+			// 'connect-php',
+			// 'sass',
+			'js',
+			// 'js-manage',
+			// 'imagemin',
+			// 'server',
+			'htmlphp',
+			'other',
+			'server',
+			'watch',
+		)
+	)
+);
 
-/**
- * build only (default))
- */
-// gulp.task('default', ['js', 'sass', 'image', 'htmlphp', 'assets']);
-gulp.task('default', ['js', 'htmlphp', 'other']);
+ // // gulp.task('dev', ['js', 'sass', 'image', 'htmlphp', 'assets', 'connect-php', 'server', 'watch']);
+// gulp.task('dev', ['js', 'htmlphp', 'other', 'server', 'watch']);
+
+// /**
+//  * build only (default))
+//  */
+// // gulp.task('default', ['js', 'sass', 'image', 'htmlphp', 'assets']);
+// gulp.task('default', ['js', 'htmlphp', 'other']);
