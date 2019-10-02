@@ -103,7 +103,9 @@ function Validon(opt)
 
 	// エラーが起きたら対象フォームのクリック解除
 	window.onerror = function(msg, url, line, col, error) {
-		validon.form.style.pointerEvents = ''
+		if(validon.form.hasOwnProperty('style')) {
+			validon.form.style.pointerEvents = ''
+		}
 	}
 }
 
