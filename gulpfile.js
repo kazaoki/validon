@@ -16,6 +16,7 @@ const browserSync  = require('browser-sync');
 const imageMin     = require('gulp-imagemin');
 const cache        = require('gulp-cache');
 const connectPhp   = require('gulp-connect-php-mb-path');
+const notify       = require('gulp-notify');
 
 /**
  * sass compile
@@ -52,39 +53,23 @@ const connectPhp   = require('gulp-connect-php-mb-path');
  * JS(ES) compile
  */
 gulp.task('js', ()=>{
-	return gulp.src(['src/assets/validon/**/*.js'])
-		.pipe(plumber({
-			handleError: function (err) {
-				console.log(err);
-				this.emit('end');
-			}
-		}))
+	return gulp.src('src/assets/validon/**/*.js', {base:'src'})
+		.pipe(plumber({errorHandler: notify.onError('Error: <%= error.message %>')}))
 		.pipe(sourcemaps.init())
-		.pipe(babel({presets: ['env']}))
-		.pipe(eslint(
-			{
-				useEslintrc: false,
-				// rules: {
-				// 	'strict': 2
-				// },
-				globals: [
-					'jQuery',
-					'$'
-				],
-				envs: [
-					'browser'
-				]
-			})
-		)
+		.pipe(babel({presets: ['@babel/preset-env']}))
+		.pipe(eslint({
+			useEslintrc: false,
+			globals: ['jQuery', '$'],
+			envs: ['browser']
+		}))
 		.pipe(eslint.format())
 		.pipe(eslint.failAfterError())
 		.pipe(concat('validon.js'))
-		// .pipe(gulp.dest('dist/js'))
+		// .pipe(gulp.dest('dist/assets/validon/'))
 		.pipe(uglify())
 		// .pipe(rename({suffix: '.min'}))
 		.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest('dist/assets/validon/'))
-		.pipe(browserSync.stream())
 });
 
 // /**
