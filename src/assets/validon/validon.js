@@ -5,7 +5,7 @@
 var __validonUrlPath = (
 	document.currentScript
 		? document.currentScript.src
-		: document.getElementsByTagName('script')[document.getElementsByTagName('script').length-1].src
+		: document.querySelector('script[src$=validon\\.js]').src
 	)
 	.replace(new RegExp('^'+location.origin), '')
 	.replace(/[^\/]+$/, '')
@@ -61,6 +61,7 @@ function Validon(opt)
 		} else if (validon.form.attachEvent) {
 			validon.form.attachEvent('onsubmit', submitEvent)
 		}
+		validon.submitEvent = submitEvent
 
 		// 要素ごとのイベント発火が有効の場合、各要素に `onChange` が登録され都度バリデートされるようになる。
 		// ※要素ごとに設定も可能（例： data-validon-on='change,keydown' ← カンマで複数指定可
@@ -361,6 +362,8 @@ Validon.prototype = {
 						// エラーがある場合はsubmit中のクリック不可を戻す
 						if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 					}
+				} else {
+					console.warn('Validon: '+this.status+' error return by validation.')
 				}
 			}
 		}
@@ -416,6 +419,23 @@ Validon.prototype = {
 			{data: params[setkey]}
 		)
 		params[setkey] = merged['data']
+	},
+
+	/**
+	 * 戻るボタン押下用のメソッド
+	 *
+	 * バリデートを実施せずURLを書き換えてPOSTする
+	 * ex. <button type="button" onclick="validon.back('/first.php')">戻る</button>
+	 */
+	back: function(backUrl){
+		console.log(backUrl)
+		validon.form.action = backUrl;
+		if (validon.form.removeEventListener) {
+			validon.form.removeEventListener('submit', validon.submitEvent, false)
+		} else if (validon.form.attachEvent) {
+			validon.form.detachEvent('onsubmit', validon.submitEvent)
+		}
+		validon.form.submit()
 	}
 }
 
