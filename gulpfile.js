@@ -100,7 +100,10 @@ gulp.task('htmlphp', ()=>{
  * other files copy
  */
 gulp.task('other', ()=>{
-	return gulp.src(['src/assets/validon/VERSION'])
+	return gulp.src([
+		'src/assets/validon/VERSION',
+		'src/assets/validon/LICENSE'
+	])
 		.pipe(gulp.dest('dist/assets/validon'))
 });
 
