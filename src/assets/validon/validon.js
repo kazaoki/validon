@@ -341,7 +341,7 @@ Validon.prototype = {
 							if(matches) {
 								var key = raw_name+'['+matches[1]+']'
 								var error = json.errors[key]
-								if(error.length) {
+								if(error && error.length) {
 									document.querySelector('[data-validon-errorholder="'+key+'"]').innerHTML = validon.errortag.replace(/\$message/, error)
 								}
 							}
