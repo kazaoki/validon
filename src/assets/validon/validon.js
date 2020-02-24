@@ -87,7 +87,7 @@ function Validon(opt)
 				for(var j=0; j<eventNames.length; j++) {
 					var event = eventNames[j];
 					if (elems[i].addEventListener) {
-						elems[i].addEventListener(event, function(e){ validon.send(this.name) }, false)
+						elems[i].addEventListener(event, function(e){ validon.send(e.target.name) }, false)
 					} else if (elems[i].attachEvent) {
 						elems[i].attachEvent('on'+event, function(e){ validon.send(e.srcElement.name) })
 					}
@@ -171,9 +171,8 @@ Validon.prototype = {
 			}
 			// セレクトプルダウン
 			else if('SELECT'===elements[i].tagName) {
-				var lump = validon.form.querySelectorAll('[name="'+name+'"] option')
-				for(var j=0; j<lump.length; j++) {
-					if(lump[j].selected) this.paramSet(params, name, lump[j].value)
+				if(''!==elements[i].options[elements[i].options.selectedIndex].value) {
+					this.paramSet(params, name, elements[i].options[elements[i].options.selectedIndex].value)
 				}
 			}
 			// ファイル選択（FileAPIが使用できる場合は name,type,size をセットする）
@@ -282,6 +281,7 @@ Validon.prototype = {
 						// 開始
 						for(var i=0; i<list.length; i++) {
 							var name = list[i]
+							var org_name = name
 							var raw_name = name.replace(/\[.*?\]/, '')
 							var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
 							if(!errorholder.length){
@@ -299,16 +299,13 @@ Validon.prototype = {
 							// エラーホルダーが指定されてなければ自動で用意
 							if(!errorholder.length) {
 
-								// 名前戻し
-								name = raw_name
-
 								// 対象要素探す
-								var elem = validon.form.querySelector('[name="'+name+'"]')
+								var elem = validon.form.querySelector('[name="'+raw_name+'"]')
 								if(!elem) {
 									// なければ[]付きのを要素を探す
-									elem = validon.form.querySelector('[name^="'+name+'["]')
+									elem = validon.form.querySelector('[name^="'+raw_name+'["]')
 									if(!elem) {
-										// console.warn('Missing element: "'+name+'"');
+										// console.warn('Missing element: "'+raw_name+'"');
 										continue;
 									}
 								}
@@ -323,7 +320,7 @@ Validon.prototype = {
 									}
 								}
 								errorholder = document.createElement('div')
-								errorholder.setAttribute('data-validon-errorholder', name)
+								errorholder.setAttribute('data-validon-errorholder', raw_name)
 								if(validon.errorposition === 'append') {
 									parent.appendChild(errorholder)
 								} else if(validon.errorposition === 'prepend') {
@@ -339,6 +336,15 @@ Validon.prototype = {
 								errorholder[j].innerHTML = message
 							}
 
+							// 複数値[xxx]の場合はここで展開
+							var matches = org_name.match(/\[([^\[\]])+\]/)
+							if(matches) {
+								var key = raw_name+'['+matches[1]+']'
+								var error = json.errors[key]
+								if(error.length) {
+									document.querySelector('[data-validon-errorholder="'+key+'"]').innerHTML = validon.errortag.replace(/\$message/, error)
+								}
+							}
 						}
 					}
 
