@@ -434,7 +434,6 @@ Validon.prototype = {
 	 * ex. <button type="button" onclick="validon.back('/first.php')">戻る</button>
 	 */
 	back: function(backUrl){
-		console.log(backUrl)
 		validon.form.action = backUrl;
 		if (validon.form.removeEventListener) {
 			validon.form.removeEventListener('submit', validon.submitEvent, false)
