@@ -97,7 +97,20 @@ function validon(&$params, $fulldata=null)
 
         // バリデート関数が設定ファイルで定義されていればバリデート実行
         if(is_callable(@$_VALIDON[$validonkey])) {
-            $error = $_VALIDON[$validonkey]($params[$key], $params, $errors, $changes);
+
+            // 複数値の場合、対象の値を見つけておく
+            $target_key = '';
+            if(is_array($params[$key])) {
+                foreach($params[$key] as $k=>$v) {
+                    if(in_array($validonkey.'['.$k.']', $fulldata['targets'])) {
+                        $target_key = $k;
+                        break;
+                    }
+                }
+            }
+
+            // バリデート実行
+            $error = $_VALIDON[$validonkey]($params[$key], $params, $errors, $changes, $target_key);
             if(strlen($error)) $errors[$key] = $error;
         } else {
             if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $validonkey));
