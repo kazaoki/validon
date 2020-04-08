@@ -102,7 +102,7 @@ function validon(&$params, $fulldata=null)
             $target_key = '';
             if(is_array($params[$key])) {
                 foreach($params[$key] as $k=>$v) {
-                    if(in_array($validonkey.'['.$k.']', $fulldata['targets'])) {
+                    if(@in_array($validonkey.'['.$k.']', $fulldata['targets'])) {
                         $target_key = $k;
                         break;
                     }
@@ -203,8 +203,8 @@ function __IS_EMAIL($string, $net=false)
 function __TRIM($data)
 {
     if(is_array($data)) {
-        foreach($data as $value) {
-            $value = __TRIM($value);
+        foreach($data as $key=>$value) {
+            $data[$key] = __TRIM($value);
         }
     } else if(is_string($data)) {
         $data = preg_replace('/\A[ \t\n\r\0\x0B\p{Z}]++|[ \t\n\r\0\x0B\p{Z}]++\z/u', '', $data);
