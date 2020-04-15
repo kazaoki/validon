@@ -67,11 +67,10 @@ function Validon(opt)
 		if(validon.form.querySelectorAll('[data-validon-proxy]').length) {
 			var elems = validon.form.querySelectorAll('[data-validon-proxy]')
 			for(var i=0; i<elems.length; i++) {
-				var proxy = elems[i].getAttribute('data-validon-proxy')
 				if (elems[i].addEventListener) {
-					elems[i].addEventListener('change', function(e){ validon.send(proxy) }, false)
+					elems[i].addEventListener('change', function(e){ validon.send(e.target.getAttribute('data-validon-proxy')) }, false)
 				} else if (elems[i].attachEvent) {
-					elems[i].attachEvent('onchange', function(e){ validon.send(proxy) })
+					elems[i].attachEvent('onchange', function(e){ validon.send(e.srcElement.getAttribute('data-validon-proxy')) })
 				}
 			}
 		}
