@@ -63,6 +63,18 @@ $_VALIDON['food'] = function(&$value, &$params, &$errors, &$changes)
 };
 
 /**
+ * 生年月日
+ */
+$_VALIDON['birth_year'] = function(&$value, &$params, &$errors, &$changes)
+{
+    if(!__IS_DATE(sprintf('%04d-%02d-%02d', $params['birth_year'], $params['birth_month'], $params['birth_day']))) {
+        return '日付まちがってますよ';
+    }
+};
+$_VALIDON['birth_month'] = null;
+$_VALIDON['birth_day'] = null;
+
+/**
  * お問い合わせ内容
  */
 $_VALIDON['content'] = function(&$value, &$params, &$errors, &$changes)

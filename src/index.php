@@ -32,6 +32,27 @@
     <section>
       好きな食べ物（任意）：<input type="text" name="food" value=""><br>
     </section>
+    <section>
+      *生年月日：
+      <select name="birth_year">
+        <option value=""></option>
+        <?php foreach(range(1900, date('Y')) as $year) { ?>
+        <option value="<?php echo $year ?>"><?php echo $year ?></option>
+        <?php } ?>
+      </select>年
+      <select name="birth_month" data-validon-proxy="birth_year">
+        <option value=""></option>
+        <?php foreach(range(1, 12) as $month) { ?>
+        <option value="<?php echo $month ?>"><?php echo $month ?></option>
+        <?php } ?>
+      </select>月
+      <select name="birth_day" data-validon-proxy="birth_year">
+        <option value=""></option>
+        <?php foreach(range(1, 31) as $day) { ?>
+        <option value="<?php echo $day ?>"><?php echo $day ?></option>
+        <?php } ?>
+      </select>日
+    </section>
   </section>
 
   <section>

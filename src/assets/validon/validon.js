@@ -63,6 +63,19 @@ function Validon(opt)
 		}
 		validon.submitEvent = submitEvent
 
+		// プロクシ指定属性の実装 : data-validon-proxy="xxx"
+		if(validon.form.querySelectorAll('[data-validon-proxy]').length) {
+			var elems = validon.form.querySelectorAll('[data-validon-proxy]')
+			for(var i=0; i<elems.length; i++) {
+				var proxy = elems[i].getAttribute('data-validon-proxy')
+				if (elems[i].addEventListener) {
+					elems[i].addEventListener('change', function(e){ validon.send(proxy) }, false)
+				} else if (elems[i].attachEvent) {
+					elems[i].attachEvent('onchange', function(e){ validon.send(proxy) })
+				}
+			}
+		}
+
 		// 要素ごとのイベント発火が有効の場合、各要素に `onChange` が登録され都度バリデートされるようになる。
 		// ※要素ごとに設定も可能（例： data-validon-on='change,keydown' ← カンマで複数指定可
 		if(validon.eachfire || validon.form.querySelectorAll('[data-validon-on]').length) {
