@@ -294,7 +294,7 @@ Validon.prototype = {
 						for(var i=0; i<list.length; i++) {
 							var name = list[i]
 							var org_name = name
-							var raw_name = name.replace(/\[.*?\]/, '')
+							var raw_name = name.replace(/\[.*\]/, '')
 							var errorholder = validon.form.querySelectorAll('[data-validon-errorholder="'+name+'"]')
 							if(!errorholder.length){
 								// [] はずしたもので探す
@@ -343,6 +343,9 @@ Validon.prototype = {
 							var message = ''
 							if(json.errors && 'undefined' !== typeof json.errors[raw_name]) {
 								message = validon.errortag.replace(/\$message/, json.errors[raw_name])
+							}
+							if(json.errors && 'undefined' !== typeof json.errors[org_name]) {
+								message = validon.errortag.replace(/\$message/, json.errors[org_name])
 							}
 							for(var j=0; j<errorholder.length; j++) {
 								errorholder[j].innerHTML = message
