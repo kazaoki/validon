@@ -100,7 +100,7 @@ function validon(&$params, $fulldata=null)
 
             // 複数値の場合、対象の値を見つけておく
             $target_key = '';
-            if(is_array($params[$key])) {
+            if(is_array(@$params[$key])) {
                 foreach($params[$key] as $k=>$v) {
                     if(@in_array($validonkey.'['.$k.']', $fulldata['targets'])) {
                         $target_key = $k;
