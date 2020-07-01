@@ -352,7 +352,7 @@ Validon.prototype = {
 							}
 
 							// 複数値[xxx]の場合はここで展開
-							var matches = org_name.match(/\[([^\[\]])+\]/)
+							var matches = org_name.match(/\[([^\[\]]+)+\]/)
 							if(matches) {
 								var key = raw_name+'['+matches[1]+']'
 								var error = json.errors[key]
