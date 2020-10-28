@@ -35,7 +35,7 @@ function Validon(opt)
 	validon.urlPath = __validonUrlPath
 
 	// オンロードセット
-	var windowOnload = window.onload || function () {
+	window.addEventListener('load', function () {
 
 		// 設定チェック
 		validon.form = document.querySelector(validon.form)
@@ -111,8 +111,7 @@ function Validon(opt)
 		if(validon.loadedFunc && 'function' === typeof validon.loadedFunc) {
 			if(false === validon.loadedFunc()) return false
 		}
-	};
-	window.onload = function () { windowOnload(); };
+	})
 
 	// エラーが起きたら対象フォームのクリック解除
 	window.onerror = function(msg, url, line, col, error) {
