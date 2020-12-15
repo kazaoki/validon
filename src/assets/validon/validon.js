@@ -141,7 +141,8 @@ Validon.prototype = {
 
 		// フック：startFunc
 		if(validon.startFunc && 'function' === typeof validon.startFunc) {
-			if(false === validon.startFunc(json)) return false
+			json = validon.startFunc(json)
+			if(false===json) return false
 		}
 
 		// submit中は要素を全てクリックできないように
@@ -227,7 +228,8 @@ Validon.prototype = {
 
 		// フック：beforeFunc
 		if(validon.beforeFunc && 'function' === typeof validon.beforeFunc) {
-			if(false === validon.beforeFunc(json)) {
+			json = validon.beforeFunc(json)
+			if(false===json) {
 				// クリック不可を戻してイベントキャンセル
 				if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 				return false
@@ -247,7 +249,8 @@ Validon.prototype = {
 
 					// フック：afterFunc
 					if(validon.afterFunc && 'function' === typeof validon.afterFunc) {
-						if(false === validon.afterFunc(json)) {
+						json = validon.afterFunc(json)
+						if(false===json) {
 							// クリック不可を戻してイベントキャンセル
 							if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 							return false
@@ -369,7 +372,8 @@ Validon.prototype = {
 
 					// フック：finsihFunc
 					if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
-						if(false === validon.finishFunc(json)) {
+						json = validon.finishFunc(json)
+						if(false===json) return false
 							// クリック不可を戻してイベントキャンセル
 							if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 							return false
