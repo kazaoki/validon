@@ -373,7 +373,7 @@ Validon.prototype = {
 					// フック：finsihFunc
 					if(validon.finishFunc && 'function' === typeof validon.finishFunc) {
 						json = validon.finishFunc(json)
-						if(false===json) return false
+						if(false===json) {
 							// クリック不可を戻してイベントキャンセル
 							if(typeof elems === 'undefined') validon.form.style.pointerEvents = ''
 							return false
