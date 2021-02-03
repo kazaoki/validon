@@ -5,7 +5,7 @@
 var __validonUrlPath = (
 	document.currentScript
 		? document.currentScript.src
-		: document.querySelector('script[src$=validon\\.js]').src
+		: document.querySelector('script[src*=validon\\.js]').src
 	)
 	.replace(new RegExp('^'+location.origin), '')
 	.replace(/[^\/]+$/, '')
