@@ -351,10 +351,10 @@ Validon.prototype = {
 								errorholder = new Array(errorholder)
 							}
 							var message = ''
-							if(json.errors && 'undefined' !== typeof json.errors[raw_name]) {
+							if(Object.keys(json.errors).length && 'undefined' !== typeof json.errors[raw_name]) {
 								message = validon.errortag.replace(/\$message/, json.errors[raw_name])
 							}
-							if(json.errors && 'undefined' !== typeof json.errors[org_name]) {
+							if(Object.keys(json.errors).length && 'undefined' !== typeof json.errors[org_name]) {
 								message = validon.errortag.replace(/\$message/, json.errors[org_name])
 							}
 							for(var j=0; j<errorholder.length; j++) {
