@@ -102,7 +102,7 @@ function validon(&$params, $fulldata=null)
             $target_key = '';
             if(is_array(@$params[$key])) {
                 foreach($params[$key] as $k=>$v) {
-                    if(@in_array($validonkey.'['.$k.']', $fulldata['targets'])) {
+                    if(in_array($validonkey.'['.$k.']', (array)$fulldata['targets'])) {
                         $target_key = $k;
                         break;
                     }
@@ -111,7 +111,7 @@ function validon(&$params, $fulldata=null)
 
             // バリデート実行
             $error = $_VALIDON[$validonkey]($params[$key], $params, $errors, $changes, $target_key);
-            if(strlen($error)) $errors[$key] = $error;
+            if(strlen((string)$error)) $errors[$key] = $error;
         } else {
             if(@$_VALIDON_ENV['NOTICE']) error_log(sprintf('Validon notice: no defined rules "%s"', $validonkey));
         }
