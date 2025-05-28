@@ -102,7 +102,7 @@ function validon(&$params, $fulldata=null)
             $target_key = '';
             if(is_array(@$params[$key])) {
                 foreach($params[$key] as $k=>$v) {
-                    if(in_array($validonkey.'['.$k.']', (array)$fulldata['targets'])) {
+                    if(in_array($validonkey.'['.$k.']', (array)@$fulldata['targets'])) {
                         $target_key = $k;
                         break;
                     }

@@ -23,8 +23,8 @@ $_VALIDON_ENV['TRIM'] = true;
 $_VALIDON['name'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
-    if(!strlen($value)) return '必須項目です。';
-    if(mb_strlen($value) > 32) return '32文字以内で入力してください。';
+    if(!strlen((string)$value)) return '必須項目です。';
+    if(mb_strlen((string)$value) > 32) return '32文字以内で入力してください。';
 };
 
 /**
@@ -36,8 +36,8 @@ $_VALIDON['kana'] = function(&$value, &$params, &$errors, &$changes)
     $value = mb_convert_kana($value, 'C');
 
     // 条件
-    if(!strlen($value)) return '必須項目です。';
-    if(mb_strlen($value) > 32) return '32文字以内で入力してください。';
+    if(!strlen((string)$value)) return '必須項目です。';
+    if(mb_strlen((string)$value) > 32) return '32文字以内で入力してください。';
 };
 
 /**
@@ -49,7 +49,7 @@ $_VALIDON['age'] = function(&$value, &$params, &$errors, &$changes)
     $value = mb_convert_kana($value, 'as');
 
     // 条件
-    if(!strlen($value)) return '必須項目です。';
+    if(!strlen((string)$value)) return '必須項目です。';
     if($value<0 || $value>200) return '正しくない値です。';
     if(!ctype_digit($value)) return '数字以外が入力されています。';
 };
@@ -80,8 +80,8 @@ $_VALIDON['birth_day'] = null;
 $_VALIDON['content'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
-    if(!strlen($value)) return '必須項目です。';
-    if(mb_strlen($value) > 255) return '255文字以内で入力してください。（改行も1カウント）';
+    if(!strlen((string)$value)) return '必須項目です。';
+    if(mb_strlen((string)$value) > 255) return '255文字以内で入力してください。（改行も1カウント）';
 };
 
 /**
@@ -90,7 +90,7 @@ $_VALIDON['content'] = function(&$value, &$params, &$errors, &$changes)
 $_VALIDON['size'] = function(&$value, &$params, &$errors, &$changes)
 {
     // 条件
-    if(!strlen($value)) return '必須項目です。';
+    if(!strlen((string)$value)) return '必須項目です。';
 };
 
 /**
@@ -108,7 +108,7 @@ $_VALIDON['color'] = function(&$values, &$params, &$errors, &$changes)
 $_VALIDON['list'] = function(&$values, &$params, &$errors, &$changes)
 {
     // 条件
-    if(!strlen(implode('', array_values($values)))) return '必須項目です。';
+    if(!strlen((string)implode('', array_values($values)))) return '必須項目です。';
 };
 
 /**
