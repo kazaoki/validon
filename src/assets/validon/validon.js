@@ -296,7 +296,9 @@ Validon.prototype = {
 						var list = json.targets;
 						for(var i in list) {
 							for(var key in json.errors) {
-								if(key.match(new RegExp('^'+list[i]+'\\\['))) list.push(key)
+								if('string'===typeof list[i]) {
+									if(key.match(new RegExp('^'+list[i]+'\\\['))) list.push(key)
+								}
 							}
 						}
 
