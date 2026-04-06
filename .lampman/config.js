@@ -150,6 +150,10 @@ module.exports.config = {
             desc: 'ngrok を使用して一時的に外部からアクセスできるようにする'
         },
 
+        minify: { // gulp もう動かないので、せめてミニファイ&map生成の単発コマンド
+            command: 'npx esbuild src/assets/validon/validon.js --minify --sourcemap --outfile=dist/assets/validon/validon.js',
+        },
+
         // extraサンプル：`lamp sample`
         // sample: {
         //     command: '(command for all os)',
