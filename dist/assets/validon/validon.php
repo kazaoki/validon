@@ -4,21 +4,47 @@
  * JSON受信したならJavaScriptからのAjax通信
  */
 if('application/json' === @$_SERVER['CONTENT_TYPE']) {
-    $json = json_decode(file_get_contents("php://input"), true) ?: array();
+	header('Content-Type: application/json; charset=utf-8');
 
-    // 指定のバリデート設定をロード
-    $configfile = __DIR__.'/configs/'.$json['config'].'.php';
-    if(!file_exists($configfile)) throw new Exception('Validon error: not found config file at '.$configfile);
-    require_once $configfile;
+	// 想定外のクエリ文字列は拒否(argv注入対策)
+	if(isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] !== '') {
+		http_response_code(400);
+		echo json_encode(array('error' => 'bad request'));
+		exit;
+	}
 
-    // バリデート実行
-    $json = validon($json['params'], $json);
+	$json = json_decode(file_get_contents("php://input"), true);
+	if(!is_array($json) || !isset($json['config']) || !is_string($json['config']) || !isset($json['params']) || !is_array($json['params'])) {
+		http_response_code(400);
+		echo json_encode(array('error' => 'bad request'));
+		exit;
+	}
 
-    // 結果JSONを返す
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($json);
+	// config名は英数字・アンダースコア・ハイフンのみ許可(../ や . を一切通さない)
+	if(!preg_match('/\A[A-Za-z0-9_\-]{1,64}\z/', $json['config'])) {
+		http_response_code(400);
+		echo json_encode(array('error' => 'invalid config name'));
+		exit;
+	}
 
-    exit;
+	// 念のため realpath でも configs ディレクトリ配下であることを確認
+	$configdir  = realpath(__DIR__.'/configs');
+	$configfile = realpath(__DIR__.'/configs/'.$json['config'].'.php');
+	if($configdir === false || $configfile === false
+		|| strpos($configfile, $configdir.DIRECTORY_SEPARATOR) !== 0) {
+		// 内部パスはクライアントに返さずログにのみ残す
+		error_log('Validon error: config file not found: '.$json['config']);
+		http_response_code(400);
+		echo json_encode(array('error' => 'invalid config'));
+		exit;
+	}
+	require_once $configfile;
+
+	// バリデート実行
+	$json = validon($json['params'], $json);
+
+	echo json_encode($json);
+	exit;
 }
 
 /**
